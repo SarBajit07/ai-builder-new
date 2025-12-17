@@ -16,7 +16,7 @@ export default function BuilderPage() {
   return (
     <div className="flex h-screen overflow-hidden">
       {/* LEFT: CHAT */}
-      <div className="w-[380px] border-r border-white/10 bg-black/40 backdrop-blur">
+      <div className="w -[380px] border-r border-white/10 bg-black/40 backdrop-blur">
         <ChatPanel />
       </div>
 
