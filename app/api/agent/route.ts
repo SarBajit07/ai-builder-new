@@ -46,7 +46,7 @@ async function callOllama(fullPrompt: string, stream = false): Promise<string | 
       throw new Error(`Ollama error ${res.status}: ${errorText}`);
     }
 
-   g if (!stream) {
+    if (!stream) {
       const data = await res.json();
       let response = data.response?.trim() ?? "";
       // Aggressive cleaning
