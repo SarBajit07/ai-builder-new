@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { ChevronLeft, ChevronRight, RotateCcw, Lock, RefreshCw } from "lucide-react";
 
 interface PreviewPanelProps {
   project: {

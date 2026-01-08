@@ -5,27 +5,22 @@ import { useState, useEffect, useRef } from "react";
 interface Project {
   frontendFiles: Record<string, string>;
   backendFiles: Record<string, string>;
-  [key: string]: any;
+  activeFile: string | null;
+  side: "frontend" | "backend";
 }
 
 interface ChatPanelProps {
   project: Project;
   setProject: React.Dispatch<React.SetStateAction<Project>>;
+  projectId?: string; // optional, for saving to backend if needed
+  onSave?: (project: Project) => Promise<void>; // optional save callback
 }
 
-export default function ChatPanel({ project, setProject }: ChatPanelProps) {
-  // Safety guard
-  const safeSetProject = (updater: (prev: Project) => Project) => {
-    if (typeof setProject !== "function") {
-      console.error("setProject is not a function! Parent must pass it properly.");
-      return;
-    }
-    setProject(updater);
-  };
-
+export default function ChatPanel({ project, setProject, projectId, onSave }: ChatPanelProps) {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [messages, setMessages] = useState<string[]>([]);
+  const [saving, setSaving] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Auto-scroll to bottom
@@ -51,7 +46,7 @@ export default function ChatPanel({ project, setProject }: ChatPanelProps) {
     });
 
     if (changesApplied > 0) {
-      safeSetProject((prev) => ({
+      setProject((prev) => ({
         ...prev,
         frontendFiles: { ...prev.frontendFiles, ...fileChanges },
       }));
@@ -109,7 +104,6 @@ export default function ChatPanel({ project, setProject }: ChatPanelProps) {
     } catch (err: any) {
       console.error("Agent request failed:", err);
 
-      // Remove typing indicator
       setMessages((prev) => prev.filter((msg) => msg !== "Agent is thinking..."));
 
       setMessages((prev) => [
@@ -118,6 +112,19 @@ export default function ChatPanel({ project, setProject }: ChatPanelProps) {
       ]);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSave = async () => {
+    if (!onSave) return;
+    setSaving(true);
+    try {
+      await onSave(project);
+      setMessages((prev) => [...prev, "Project saved successfully! 💾"]);
+    } catch (err) {
+      setMessages((prev) => [...prev, `Save failed: ${(err as Error).message}`]);
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -132,12 +139,23 @@ export default function ChatPanel({ project, setProject }: ChatPanelProps) {
       {/* Header */}
       <div className="p-4 border-b border-gray-800 flex justify-between items-center">
         <h2 className="text-lg font-semibold">AI Agent</h2>
-        <button
-          onClick={clearChat}
-          className="text-sm text-gray-400 hover:text-white transition"
-        >
-          Clear
-        </button>
+        <div className="flex gap-3">
+          {onSave && (
+            <button
+              onClick={handleSave}
+              disabled={saving}
+              className="text-sm px-3 py-1 bg-blue-600 hover:bg-blue-700 rounded disabled:opacity-50 transition"
+            >
+              {saving ? "Saving..." : "Save Project"}
+            </button>
+          )}
+          <button
+            onClick={clearChat}
+            className="text-sm text-gray-400 hover:text-white transition"
+          >
+            Clear
+          </button>
+        </div>
       </div>
 
       {/* Messages */}
@@ -151,13 +169,13 @@ export default function ChatPanel({ project, setProject }: ChatPanelProps) {
         {messages.map((msg, i) => (
           <div
             key={i}
-            className={`whitespace-pre-wrap p-3 rounded-lg max-w-[85%] ${
+            className={`whitespace-pre-wrap p-3 rounded-lg max-w-[85%] text-sm leading-relaxed ${
               msg.startsWith("You:")
                 ? "bg-blue-900/40 ml-auto"
                 : msg.startsWith("Error:")
                   ? "bg-red-900/40"
                   : msg === "Agent is thinking..."
-                    ? "bg-gray-800/60 italic text-gray-400"
+                    ? "bg-gray-800/60 italic text-gray-400 animate-pulse"
                     : "bg-gray-800/60 mr-auto"
             }`}
           >
@@ -182,7 +200,7 @@ export default function ChatPanel({ project, setProject }: ChatPanelProps) {
             }}
             disabled={loading}
             className="flex-1 rounded-lg bg-gray-900/70 border border-gray-700 px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-blue-600 disabled:opacity-50"
-            placeholder="Ask the agent to modify the UI... (e.g. add dark mode toggle)"
+            placeholder="Ask the agent to build or modify... (e.g. add dark mode toggle)"
           />
 
           <button
