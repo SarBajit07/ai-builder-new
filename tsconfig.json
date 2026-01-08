@@ -4,48 +4,35 @@
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
-    "strict": true,
+    "strict": false,
     "noEmit": true,
-
-    "esModuleInterop": true,
+    "incremental": true,
 
     "module": "esnext",
-    "moduleResolution": "bundler",
-
+    "moduleResolution": "node",
+    "esModuleInterop": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "react-jsx",
 
-    "incremental": true,
-
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
+    "baseUrl": ".",                // ✅ needed for @/ imports
+    "paths": {                     // ✅ map @/* to project root
+      "@/*": ["./*"]
+    },
 
     "plugins": [
       {
         "name": "next"
       }
-    ],
-
-    "paths": {
-      "@/*": ["./*"]
-    },
-
-    // NEW: Added for perfect Monaco Editor TypeScript support
-    "types": ["@monaco-editor/loader"],
-    "typeRoots": ["./node_modules/@types", "./node_modules/@monaco-editor"]
+    ]
   },
-
   "include": [
     "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "**/*.mts",
-    // NEW: Ensure Monaco types are picked up
-    "node_modules/@monaco-editor/loader/**/*.d.ts"
+    "**/*.ts",
+    "**/*.tsx"
   ],
-
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", ".next"]
 }

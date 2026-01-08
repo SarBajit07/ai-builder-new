@@ -10,7 +10,7 @@ import Link from "next/link";
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-zinc-900 to-black text-white">
+    <div className="min-h-screen bg-linear-to-br from-black via-zinc-900 to-black text-white">
       {/* Hero Section */}
       <section className="relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 py-32 text-center">

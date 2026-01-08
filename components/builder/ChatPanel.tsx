@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { parseAgentResponse } from "@/lib/agent/parseAgent";
+import { useState, useEffect, useRef } from "react";
 
 interface Project {
   frontendFiles: Record<string, string>;
@@ -11,20 +10,14 @@ interface Project {
 
 interface ChatPanelProps {
   project: Project;
-  setProject: React.Dispatch<React.SetStateAction<Project>>; // Required - no more ?
+  setProject: React.Dispatch<React.SetStateAction<Project>>;
 }
 
 export default function ChatPanel({ project, setProject }: ChatPanelProps) {
   // Safety guard
   const safeSetProject = (updater: (prev: Project) => Project) => {
     if (typeof setProject !== "function") {
-      console.error(
-        "❌ setProject is missing or not a function!\n" +
-          "Parent must pass: <ChatPanel project={project} setProject={setProject} />"
-      );
-      if (process.env.NODE_ENV === "development") {
-        throw new Error("setProject prop is required");
-      }
+      console.error("setProject is not a function! Parent must pass it properly.");
       return;
     }
     setProject(updater);
@@ -33,67 +26,43 @@ export default function ChatPanel({ project, setProject }: ChatPanelProps) {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [messages, setMessages] = useState<string[]>([]);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const applyAgentActions = (raw: string) => {
-    const parsed = parseAgentResponse(raw);
+  // Auto-scroll to bottom
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
-    if (!parsed) {
-      console.warn("No parsed agent response");
-      setMessages((prev) => [...prev, "Agent: Could not understand the response 😕"]);
+  // Handle agent response
+  const applyAgentActions = ({ files, message }: { files?: Record<string, string>; message?: string }) => {
+    if (!files || Object.keys(files).length === 0) {
+      setMessages((prev) => [...prev, "Agent: No valid file changes found 🤔"]);
       return;
     }
 
     let changesApplied = 0;
     const fileChanges: Record<string, string> = {};
 
-    // Case 1: actions array (preferred)
-    if (Array.isArray(parsed.actions)) {
-      parsed.actions.forEach((action: any) => {
-        if (!action?.file || typeof action.content !== "string") return;
-        fileChanges[action.file] = action.content;
+    Object.entries(files).forEach(([file, content]) => {
+      if (typeof content === "string") {
+        fileChanges[file] = content;
         changesApplied++;
-      });
-    }
-    // Case 2: files object
-    else if (parsed.files && typeof parsed.files === "object" && !Array.isArray(parsed.files)) {
-      Object.entries(parsed.files).forEach(([file, content]) => {
-        if (typeof content === "string") {
-          fileChanges[file] = content;
-          changesApplied++;
-        }
-      });
-    }
-    // Case 3: direct mapping
-    else if (typeof parsed === "object" && !Array.isArray(parsed)) {
-      Object.entries(parsed).forEach(([key, value]) => {
-        if (typeof value === "string" && /\.(tsx|jsx|ts|js|css)$/.test(key)) {
-          fileChanges[key] = value;
-          changesApplied++;
-        }
-      });
-    }
+      }
+    });
 
     if (changesApplied > 0) {
-      safeSetProject((prev) => {
-        const updated = {
-          ...prev,
-          frontendFiles: { ...prev.frontendFiles, ...fileChanges },
-          backendFiles: { ...prev.backendFiles },
-        };
-
-        console.log(`Applied ${changesApplied} file change(s)`, fileChanges);
-        return updated;
-      });
+      safeSetProject((prev) => ({
+        ...prev,
+        frontendFiles: { ...prev.frontendFiles, ...fileChanges },
+      }));
 
       setMessages((prev) => [
         ...prev,
         `Agent: ${changesApplied} file(s) updated successfully ✅`,
-      ]);
+        message ? `→ ${message}` : "",
+      ].filter(Boolean));
     } else {
-      setMessages((prev) => [
-        ...prev,
-        "Agent: No valid file changes found in the response 🤔",
-      ]);
+      setMessages((prev) => [...prev, "Agent: No valid changes detected"]);
     }
   };
 
@@ -105,6 +74,9 @@ export default function ChatPanel({ project, setProject }: ChatPanelProps) {
     setMessages((prev) => [...prev, `You: ${prompt}`]);
     setInput("");
 
+    // Show typing indicator
+    setMessages((prev) => [...prev, "Agent is thinking..."]);
+
     try {
       const res = await fetch("/api/agent", {
         method: "POST",
@@ -113,7 +85,7 @@ export default function ChatPanel({ project, setProject }: ChatPanelProps) {
       });
 
       if (!res.ok) {
-        const errorText = await res.text();
+        const errorText = await res.text().catch(() => "Unknown error");
         throw new Error(`Server error ${res.status}: ${errorText}`);
       }
 
@@ -123,18 +95,53 @@ export default function ChatPanel({ project, setProject }: ChatPanelProps) {
         throw new Error(data.error || "AI agent failed");
       }
 
-      applyAgentActions(data.raw);
+      // Remove typing indicator
+      setMessages((prev) => prev.filter((msg) => msg !== "Agent is thinking..."));
+
+      applyAgentActions({
+        files: data.files,
+        message: data.message,
+      });
+
+      if (process.env.NODE_ENV === "development" && data.raw) {
+        console.log("Raw agent response:", data.raw);
+      }
     } catch (err: any) {
       console.error("Agent request failed:", err);
-      setMessages((prev) => [...prev, `Error: ${err.message || "Something went wrong"}`]);
+
+      // Remove typing indicator
+      setMessages((prev) => prev.filter((msg) => msg !== "Agent is thinking..."));
+
+      setMessages((prev) => [
+        ...prev,
+        `Error: ${err.message || "Something went wrong. Try again."}`,
+      ]);
     } finally {
       setLoading(false);
     }
   };
 
+  const clearChat = () => {
+    if (window.confirm("Clear chat history?")) {
+      setMessages([]);
+    }
+  };
+
   return (
-    <div className="flex h-full flex-col p-4 bg-gradient-to-b from-gray-950 to-black text-white">
-      <div className="flex-1 overflow-y-auto space-y-4 pb-4 scrollbar-thin scrollbar-thumb-gray-700">
+    <div className="flex h-full flex-col bg-gradient-to-b from-gray-950 to-black text-white">
+      {/* Header */}
+      <div className="p-4 border-b border-gray-800 flex justify-between items-center">
+        <h2 className="text-lg font-semibold">AI Agent</h2>
+        <button
+          onClick={clearChat}
+          className="text-sm text-gray-400 hover:text-white transition"
+        >
+          Clear
+        </button>
+      </div>
+
+      {/* Messages */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-thumb-gray-700">
         {messages.length === 0 && (
           <div className="text-center text-gray-500 mt-10">
             Ask the AI to build or modify your UI...
@@ -145,36 +152,47 @@ export default function ChatPanel({ project, setProject }: ChatPanelProps) {
           <div
             key={i}
             className={`whitespace-pre-wrap p-3 rounded-lg max-w-[85%] ${
-              msg.startsWith("You:") ? "bg-blue-900/40 ml-auto" : "bg-gray-800/60 mr-auto"
+              msg.startsWith("You:")
+                ? "bg-blue-900/40 ml-auto"
+                : msg.startsWith("Error:")
+                  ? "bg-red-900/40"
+                  : msg === "Agent is thinking..."
+                    ? "bg-gray-800/60 italic text-gray-400"
+                    : "bg-gray-800/60 mr-auto"
             }`}
           >
             {msg}
           </div>
         ))}
+
+        <div ref={messagesEndRef} />
       </div>
 
-      <div className="flex gap-3 pt-4 border-t border-gray-800">
-        <input
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && !e.shiftKey) {
-              e.preventDefault();
-              send();
-            }
-          }}
-          disabled={loading}
-          className="flex-1 rounded-lg bg-gray-900/70 border border-gray-700 px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-blue-600 disabled:opacity-50"
-          placeholder="Ask the agent to modify the UI... (e.g. add dark mode toggle)"
-        />
+      {/* Input area */}
+      <div className="p-4 border-t border-gray-800">
+        <div className="flex gap-3">
+          <input
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                send();
+              }
+            }}
+            disabled={loading}
+            className="flex-1 rounded-lg bg-gray-900/70 border border-gray-700 px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-blue-600 disabled:opacity-50"
+            placeholder="Ask the agent to modify the UI... (e.g. add dark mode toggle)"
+          />
 
-        <button
-          onClick={send}
-          disabled={loading || !input.trim()}
-          className="px-6 rounded-lg bg-blue-700 hover:bg-blue-600 active:bg-blue-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
-        >
-          {loading ? "Thinking..." : "Send"}
-        </button>
+          <button
+            onClick={send}
+            disabled={loading || !input.trim()}
+            className="px-6 rounded-lg bg-blue-700 hover:bg-blue-600 active:bg-blue-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+          >
+            {loading ? "Thinking..." : "Send"}
+          </button>
+        </div>
       </div>
     </div>
   );

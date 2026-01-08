@@ -10,138 +10,115 @@ interface PreviewPanelProps {
 
 export default function PreviewPanel({ project }: PreviewPanelProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
-  const [status, setStatus] = useState("Loading preview...");
+  const [status, setStatus] = useState("Initializing preview...");
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
+  const previewBase = "http://127.0.0.1:3001"; // Use 127.0.0.1 instead of localhost (more reliable on Windows)
+
+  // Set initial src immediately
+  useEffect(() => {
+    if (iframeRef.current) {
+      iframeRef.current.src = `${previewBase}?t=${Date.now()}`;
+      setStatus("Connecting to preview server...");
+    }
+  }, []);
+
+  // Handle file changes → write files & reload
+  useEffect(() => {
+    if (Object.keys(project.frontendFiles).length === 0) {
+      setStatus("Waiting for AI to generate files...");
+      setErrorMsg(null);
+      return;
+    }
+
+    const controller = new AbortController();
+
+    const updatePreview = async () => {
+      setStatus("Saving files & (re)starting preview server...");
+      setErrorMsg(null);
+
+      try {
+        const res = await fetch("/api/write-preview", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ frontendFiles: project.frontendFiles }),
+          signal: controller.signal,
+        });
+
+        if (!res.ok) {
+          const text = await res.text().catch(() => "Unknown error");
+          throw new Error(`Write failed (${res.status}): ${text}`);
+        }
+
+        // Give server time to boot/restart (first time can take 5–10s)
+        await new Promise((resolve) => setTimeout(resolve, 3000));
+
+        setStatus("Reloading preview...");
+
+        // Force fresh load with strong cache busting
+        if (iframeRef.current) {
+          iframeRef.current.src = `${previewBase}?t=${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
+        }
+
+        setStatus("Preview loading...");
+      } catch (err: any) {
+        if (err.name === "AbortError") return;
+        console.error("Preview update failed:", err);
+        setErrorMsg(err.message || "Failed to update preview");
+        setStatus("Error");
+      }
+    };
+
+    updatePreview();
+
+    return () => controller.abort();
+  }, [project.frontendFiles]);
+
+  // Detect successful load
   useEffect(() => {
     const iframe = iframeRef.current;
     if (!iframe) return;
 
-    iframe.src = "about:blank"; // Reset iframe
+    const onLoad = () => {
+      setStatus("Live ✓");
+      setErrorMsg(null);
+    };
 
-    const doc = iframe.contentDocument || iframe.contentWindow?.document;
-    if (!doc) return;
+    const onError = () => {
+      setStatus("Preview failed to load");
+      setErrorMsg("Connection refused or server error – check terminal");
+    };
 
-    const files = project.frontendFiles || {};
-    const tsxFiles = Object.keys(files).filter((path) => /\.(tsx|jsx)$/.test(path));
+    iframe.addEventListener("load", onLoad);
+    iframe.addEventListener("error", onError);
 
-    if (tsxFiles.length === 0) {
-      setStatus("No .tsx/.jsx files found");
-      doc.open();
-      doc.write(`
-        <!DOCTYPE html>
-        <html>
-          <body style="margin:0;background:#111;color:#aaa;font-family:system-ui;height:100vh;display:flex;align-items:center;justify-content:center;">
-            <div style="text-align:center;padding:2rem;max-width:600px;">
-              <h2 style="margin-bottom:1rem;">No code files yet</h2>
-              <p style="opacity:0.8;">Ask the agent to create something!</p>
-            </div>
-          </body>
-        </html>
-      `);
-      doc.close();
-      return;
-    }
-
-    // Prefer app/page.tsx if present
-    const entryPath = tsxFiles.find(p => p.includes("page.tsx")) || tsxFiles[0];
-    const entryCode = files[entryPath] || "";
-
-    setStatus("Transpiling code...");
-
-    doc.open();
-    doc.write(`
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Preview</title>
-  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-  <script src="https://unpkg.com/@babel/standalone@7/babel.min.js"></script>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    body { margin:0; background:#000; color:#fff; font-family:system-ui; height:100vh; overflow:hidden; }
-    #root { height:100%; }
-    #status { position:fixed; top:10px; left:10px; background:rgba(0,255,0,0.4); padding:8px 12px; border-radius:6px; z-index:1000; font-size:13px; backdrop-filter:blur(4px); }
-  </style>
-</head>
-<body>
-  <div id="root"></div>
-  <div id="status">Loading preview...</div>
-
-  <script>
-    const status = document.getElementById('status');
-    function update(msg) { status.textContent = msg; }
-    function error(msg) { status.innerHTML = '<span style="color:#ff6b6b;font-weight:bold;">' + msg + '</span>'; }
-
-    try {
-      console.log('PreviewPanel: Starting transpilation...');
-      const userCode = \`${entryCode.replace(/`/g, "\\`").replace(/\$/g, "\\$")}\`;
-
-      const transformed = Babel.transform(userCode, {
-        presets: ["react", "typescript"],
-        filename: "${entryPath}",
-      }).code;
-
-      console.log('PreviewPanel: Code transformed successfully');
-      eval(transformed);
-      console.log('PreviewPanel: Code executed');
-
-      let Component = null;
-
-      // 1. Default export (most common in page.tsx)
-      if (typeof default !== 'undefined' && typeof default === 'function') {
-        Component = default;
-        console.log('Found default export');
-      }
-
-      // 2. Common component names
-      if (!Component && typeof App === 'function') { Component = App; console.log('Found App'); }
-      if (!Component && typeof Page === 'function') { Component = Page; console.log('Found Page'); }
-      if (!Component && typeof TodoList === 'function') { Component = TodoList; console.log('Found TodoList'); }
-      if (!Component && typeof HelloWorld === 'function') { Component = HelloWorld; console.log('Found HelloWorld'); }
-
-      // 3. Last resort: any exported PascalCase function
-      if (!Component) {
-        for (const key in window) {
-          if (typeof window[key] === 'function' && /^[A-Z]/.test(key)) {
-            Component = window[key];
-            console.log('Found component via scan:', key);
-            break;
-          }
-        }
-      }
-
-      if (typeof Component !== 'function') {
-        throw new Error("No valid React component found. Checked default export, App, Page, TodoList, HelloWorld, and PascalCase exports.");
-      }
-
-      console.log('PreviewPanel: Component detected:', Component.name || 'anonymous');
-      const root = ReactDOM.createRoot(document.getElementById('root'));
-      root.render(React.createElement(Component));
-      update("Rendered successfully ✓");
-      console.log('PreviewPanel: Component rendered');
-    } catch (e) {
-      error("Render failed: " + (e.message || e));
-      console.error('PreviewPanel full error:', e);
-    }
-  </script>
-</body>
-</html>
-    `);
-    doc.close();
-  }, [project.frontendFiles]);
+    return () => {
+      iframe.removeEventListener("load", onLoad);
+      iframe.removeEventListener("error", onError);
+    };
+  }, []);
 
   return (
-    <div className="relative w-full h-full bg-black rounded-xl overflow-hidden border border-white/10">
+    <div className="relative h-full w-full bg-black rounded-lg overflow-hidden border border-neutral-800">
       <iframe
         ref={iframeRef}
-        className="w-full h-full border-0"
-        sandbox="allow-scripts allow-same-origin"
+        src={`${previewBase}?t=${Date.now()}`}
+        className="h-full w-full border-0"
+        sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-modals allow-storage-access-by-user-activation allow-top-navigation"
+        allow="cross-origin-isolated; camera; microphone; geolocation; clipboard-write"
         title="Live Preview"
-        src="about:blank"
+        loading="lazy"
       />
+
+      {/* Status overlay */}
+      <div className="absolute top-3 left-3 z-50 px-4 py-2 rounded-lg text-sm font-mono backdrop-blur-lg bg-black/80 border border-white/20 shadow-lg">
+        {status}
+        {errorMsg && (
+          <div className="mt-1 text-red-400 text-xs max-w-[320px] break-all">
+            {errorMsg}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

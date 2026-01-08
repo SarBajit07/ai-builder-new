@@ -5,29 +5,36 @@ interface OllamaPayload {
   model: string;
   prompt: string;
   stream: boolean;
-  format: "json";
+  format?: "json";
   options: {
     temperature: number;
     top_p: number;
     top_k: number;
     repeat_penalty?: number;
+    num_ctx?: number;
   };
 }
 
-async function callOllama(fullPrompt: string, stream = false): Promise<string | ReadableStream> {
+/* -------------------- Ollama Call -------------------- */
+async function callOllama(
+  prompt: string,
+  stream = false,
+  model = "llama3.1:8b"
+): Promise<string> {
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 300000); // 5 minutes
+  const timeoutId = setTimeout(() => controller.abort(), 240_000);
 
   const payload: OllamaPayload = {
-    model: "qwen2.5-coder:3b-instruct-q6_K",
-    prompt: fullPrompt,
+    model,
+    prompt,
     stream,
-    format: "json",
+    format: "json",           // Native JSON mode
     options: {
-      temperature: 0.0,           // maximum determinism
-      top_p: 0.85,
-      top_k: 30,
+      temperature: 0.01,      // Extremely low for strict format obedience
+      top_p: 0.9,
+      top_k: 40,
       repeat_penalty: 1.1,
+      num_ctx: 8192,
     },
   };
 
@@ -42,119 +49,131 @@ async function callOllama(fullPrompt: string, stream = false): Promise<string | 
     clearTimeout(timeoutId);
 
     if (!res.ok) {
-      const errorText = await res.text();
-      throw new Error(`Ollama error ${res.status}: ${errorText}`);
+      throw new Error(`Ollama error ${res.status}`);
     }
 
-    if (!stream) {
-      const data = await res.json();
-      let response = data.response?.trim() ?? "";
-      // Aggressive cleaning
-      response = response
-        .replace(/^```(?:json)?\s*/i, "")
-        .replace(/\s*```$/i, "")
-        .replace(/^\s*{\s*/, "{")
-        .replace(/\s*}\s*$/, "}")
-        .trim();
-      return response;
-    }
-
-    return res.body!;
+    const data = await res.json();
+    return String(data.response ?? "").trim();
   } catch (err: any) {
     clearTimeout(timeoutId);
-    if (err.name === "AbortError") {
-      throw new Error("Request timed out after 5 minutes");
-    }
+    if (err.name === "AbortError") throw new Error("Ollama timeout (240s)");
     throw err;
   }
 }
 
-export async function POST(req: NextRequest) {
+/* -------------------- Super Aggressive JSON Extraction -------------------- */
+function extractJSON(raw: string): any {
+  if (!raw) return null;
+
+  let text = raw
+    .replace(/```(?:json|tsx|jsx|ts|js)?\s*/gi, "")
+    .replace(/```/g, "")
+    .replace(/^json\s*/i, "")
+    .replace(/^[^{]*?{/, "{")
+    .replace(/}[^}]*$/, "}")
+    .trim();
+
+  const start = text.indexOf("{");
+  const end = text.lastIndexOf("}") + 1;
+
+  if (start === -1 || end <= start) {
+    console.warn("No JSON object found in response");
+    return null;
+  }
+
+  text = text.slice(start, end);
+
   try {
-    const body = await req.json();
-    const { prompt, project, stream = false } = body;
-
-    if (!prompt || typeof prompt !== "string") {
-      return NextResponse.json({ success: false, error: "Missing or invalid prompt" }, { status: 400 });
-    }
-
-    // ── STRICTEST SYSTEM PROMPT ──
-    const systemPrompt = `
-You are a perfectionist Next.js expert who writes **clean, valid, error-free, production-ready code** that always compiles and runs.
-
-CRITICAL RULES - VIOLATE ANY AND THE OUTPUT IS INVALID:
-
-- Output **ONLY valid JSON** — no text, no markdown, no fences, no prose, no comments outside JSON.
-- Generate **perfectly valid TypeScript/TSX code** — no syntax errors, no typos, no garbage characters (no ~~~~~, ^, repeated ; or }).
-- ALWAYS use proper JSX syntax: correct tags, balanced, no invalid nesting.
-- ALWAYS include full structure:
-  - "app/layout.tsx" — root layout with metadata, Tailwind, <html lang="en" className="dark"><body>{children}</body></html>
-  - "app/page.tsx" — main page rendering the feature (import and use components)
-  - Components in "components/" with proper 'use client' when needed
-- Use **Tailwind CSS** only (dark mode default, responsive classes)
-- Use **TypeScript** everywhere (proper types, no any)
-- Clean code: no console.logs, proper imports, functional components, no duplication
-- NEVER generate plain HTML/JS — all React/Next.js
-- Code must be 100% error-free, identical to professional production code
-
-Return ONLY this JSON format:
-
-{
-  "files": {
-    "app/layout.tsx": "full valid code",
-    "app/page.tsx": "full valid code",
-    "components/TodoList.tsx": "full valid component",
-    // add other files
-  },
-  "message": "optional short note"
+    return JSON.parse(text);
+  } catch (e) {
+    console.error("JSON parse failed:", {
+      error: e,
+      cleanedText: text.slice(0, 500) + (text.length > 500 ? "..." : ""),
+      rawPreview: raw.slice(0, 300) + "...",
+    });
+    return null;
+  }
 }
 
-Examples of INVALID code (NEVER generate this):
-- Missing semicolons, unbalanced braces, typos like "Hellloworld"
-- Garbage like ~~~~~, ^, repeated }; or ;
-- Invalid JSX: <div><h1>Hello</div>
-- Plain HTML without React
-- JSX outside return: <div>Hello</div> (not inside function)
-- Missing "use client" when using useState/onClick
-- Missing import React hooks
-- JSX without component wrapper: <div>Hello</div> (must be inside return)
+/* -------------------- Main Route Handler -------------------- */
+export async function POST(req: NextRequest) {
+  try {
+    const { prompt, project } = await req.json();
 
-User request: ${prompt}
-
-Current project files (reference only - modify or add to them):
-${JSON.stringify(project?.frontendFiles || {}, null, 2)}
-`;
-
-    if (!stream) {
-      const raw = await callOllama(systemPrompt, false);
-
-      try {
-        JSON.parse(raw as string);
-      } catch {
-        console.warn("Invalid JSON from Ollama:", (raw as string).slice(0, 200));
-      }
-
-      return NextResponse.json({ success: true, raw });
+    if (!prompt || typeof prompt !== "string") {
+      return NextResponse.json({ success: false, error: "Missing prompt" }, { status: 400 });
     }
 
-    const bodyStream = await callOllama(systemPrompt, true);
-    if (!bodyStream) {
-      return NextResponse.json({ success: false, error: "Stream unavailable" }, { status: 500 });
+    const systemPrompt = 
+      "You are an expert frontend developer building clean, modern, interactive websites with Next.js App Router. " +
+      "Output **ONLY** valid raw JSON. Nothing else ever. No explanations, no markdown, no fences, no comments, no text before {, no text after }.\n\n" +
+      "Exact required format (copy exactly):\n" +
+      "{\n" +
+      "  \"files\": {\n" +
+      "    \"app/layout.tsx\": \"full valid code as plain string\",\n" +
+      "    \"app/page.tsx\": \"full valid code as plain string\",\n" +
+      "    \"app/globals.css\": \"optional CSS as plain string\",\n" +
+      "    \"components/...\": \"any additional components (create folders if needed)\"\n" +
+      "  },\n" +
+      "  \"message\": \"short summary of what was built\"\n" +
+      "}\n\n" +
+      "STRICT RULES:\n" +
+      "- ONLY the JSON object above — nothing else in the response\n" +
+      "- Code values MUST be plain strings, NOT wrapped in quotes, JSON, or backticks\n" +
+      "- Use **modern Next.js App Router** (app/ directory) ONLY\n" +
+      "- TypeScript + Tailwind CSS + shadcn/ui components when appropriate\n" +
+      "- Include metadata export in layout.tsx\n" +
+      "- Make it **interactive**: use React hooks (useState, useEffect), client components ('use client') when needed\n" +
+      "- Add smooth animations with framer-motion if it fits\n" +
+      "- Fully responsive (mobile-first, Tailwind breakpoints: sm, md, lg)\n" +
+      "- Clean, beautiful, production-ready UI — no backend, no auth, no database unless explicitly asked\n" +
+      "- No junk imports (no '@vercel/static-export', no 'next/page')\n\n" +
+      "User request: " + prompt + "\n\n" +
+      "Existing files:\n" +
+      JSON.stringify(project?.frontendFiles || {}, null, 2);
+
+    // First attempt
+    let raw = await callOllama(systemPrompt);
+    let parsed = extractJSON(raw);
+
+    // Retry 1: ultra strict
+    if (!parsed || !parsed.files) {
+      console.warn("First attempt failed - retry 1 (ultra strict)");
+
+      const retry1 = 
+        "Output ONLY this exact JSON, nothing else:\n\n" +
+        "{\"files\":{\"app/layout.tsx\":\"import \\\"./globals.css\\\";\n\\n" +
+        "export const metadata = {\\n  title: \\\"Hello World\\\",\\n};\\n\\n" +
+        "export default function RootLayout({ children }: { children: React.ReactNode }) {\\n  return (\\n    <html lang=\\\"en\\\">\\n      <body>{children}</body>\\n    </html>\\n  );\n}\",\"app/page.tsx\":\"export default function Page() { return <div className=\\\"p-8 text-center\\\">Hello World</div>; }\"},\"message\":\"fixed\"}\n\n" +
+        "User request: " + prompt;
+
+      raw = await callOllama(retry1);
+      parsed = extractJSON(raw);
     }
 
-    return new Response(bodyStream, {
-      headers: {
-        "Content-Type": "text/event-stream",
-        "Cache-Control": "no-cache",
-        "Connection": "keep-alive",
-        "Access-Control-Allow-Origin": "*",
-      },
+    if (!parsed || !parsed.files || Object.keys(parsed.files).length === 0) {
+      console.error("Agent failed to produce valid JSON after retries", {
+        rawPreview: raw.slice(0, 500) + (raw.length > 500 ? "..." : ""),
+      });
+
+      return NextResponse.json({
+        success: false,
+        error: "Model could not generate valid JSON",
+        rawPreview: raw.slice(0, 1000),
+      }, { status: 500 });
+    }
+
+    return NextResponse.json({
+      success: true,
+      files: parsed.files,
+      message: parsed.message ?? "Generated successfully",
+      raw,                    // keep for debugging
     });
-  } catch (error: any) {
-    console.error("Agent API error:", error);
-    return NextResponse.json(
-      { success: false, error: error.message || "Internal error" },
-      { status: 500 }
-    );
+  } catch (err: any) {
+    console.error("[Agent API]", err);
+    return NextResponse.json({
+      success: false,
+      error: err.message || "Internal error",
+    }, { status: 500 });
   }
 }

@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["file:///C:/Users/NITRO/ai-builder/ai-preview/app/globals.css"],"sourcesContent":[".bg-gray-100 { background-color: #f7fafc; }\n.text-gray-900 { color: #1a202c; }"],"names":[],"mappings":"AAAA;;;;AACA"}}]
+}
