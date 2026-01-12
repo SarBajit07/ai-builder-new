@@ -1,3 +1,6 @@
+// lib/db/entities/Project.ts
+import "reflect-metadata";
+
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -5,48 +8,43 @@ import {
   ManyToOne,
   CreateDateColumn,
   UpdateDateColumn,
-  Index,
 } from "typeorm";
-import { User } from "./User";
 
 @Entity()
-@Index(["user", "name"], { unique: true }) // Prevent duplicate project names per user
 export class Project {
   @PrimaryGeneratedColumn("uuid")
-  id!: string;
+  id?: string;
 
-  @Column({ length: 100 })
-  name!: string;
+  @Column({ type: "varchar", length: 255 })
+  name?: string;
 
-  @Column({ default: "nextjs", length: 50 })
-  framework!: string;
-
-  // Use jsonb instead of simple-json for PostgreSQL (better performance + querying)
-  // If you're using SQLite/MySQL, keep simple-json
-  @Column({ type: "jsonb", nullable: false, default: "{}" })
-  frontendFiles!: Record<string, string>;
-
-  @Column({ type: "jsonb", nullable: false, default: "{}" })
-  backendFiles!: Record<string, string>;
-
-  // Optional: store the last active file/path for UX persistence
-  @Column({ nullable: true })
-  lastActiveFile?: string;
-
-  // Optional: project description or notes
   @Column({ type: "text", nullable: true })
   description?: string;
 
-  // Relation to owner
-  @ManyToOne(() => User, (user) => user.projects, {
-    onDelete: "CASCADE", // Delete projects when user is deleted
+  @Column({ type: "varchar", length: 50, default: "draft" })
+  status?: string; // e.g. "draft", "active", "archived"
+
+  // Use "json" instead of "jsonb" for SQLite compatibility
+  @Column({ type: "json", nullable: true })
+  frontendFiles?: Record<string, string>;
+
+  @Column({ type: "json", nullable: true })
+  backendFiles?: Record<string, string>;
+
+  // Alternative: single data field if you prefer (e.g. full ProjectState)
+  @Column({ type: "json", nullable: true })
+  data?: any; // or Record<string, any> if you want stricter typing
+
+  // Use string reference to avoid circular import
+  @ManyToOne("User", (user) => user.projects, {
+    onDelete: "CASCADE",
     nullable: false,
   })
-  user!: User;
+  user?: User;
 
-  @CreateDateColumn()
-  createdAt!: Date;
+  @CreateDateColumn({ type: "datetime" })
+  createdAt?: Date;
 
-  @UpdateDateColumn()
-  updatedAt!: Date;
+  @UpdateDateColumn({ type: "datetime" })
+  updatedAt?: Date;
 }

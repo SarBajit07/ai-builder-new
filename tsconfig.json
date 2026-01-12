@@ -8,22 +8,24 @@
     ],
     "allowJs": true,
     "skipLibCheck": true,
-    "strict": false,
+    "strict": false, // ← keep false for now, turn true later
     "noEmit": true,
     "incremental": true,
-
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler", // ← better for Next.js + Turbopack
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "react-jsx",
-
-    "baseUrl": ".",                // ✅ needed for @/ imports
-    "paths": {                     // ✅ map @/* to project root
-      "@/*": ["./*"]
+    // Required for TypeORM decorators (removes red squiggles in VS Code)
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./*"
+      ]
     },
-
     "plugins": [
       {
         "name": "next"
@@ -32,11 +34,16 @@
   },
   "include": [
     "next-env.d.ts",
-    ".next/types/**/*.ts",
-    ".next/dev/types/**/*.ts",
-    "**/*.mts",
     "**/*.ts",
-    "**/*.tsx"
+    "**/*.tsx",
+    "**/*.mts"
+    // Remove .next/types – Next.js handles them automatically
+    ,
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts"
   ],
-  "exclude": ["node_modules", ".next"]
+  "exclude": [
+    "node_modules",
+    ".next"
+  ]
 }

@@ -1,3 +1,6 @@
+// lib/db/entities/User.ts
+import "reflect-metadata";
+
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -6,46 +9,58 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Index,
+  BeforeInsert,
+  BeforeUpdate,
 } from "typeorm";
-import { Project } from "./Project";
+import bcrypt from "bcryptjs";
 
 @Entity()
 export class User {
   @PrimaryGeneratedColumn("uuid")
-  id!: string;
+  id?: string;
 
-  @Column({ unique: true, length: 255 })
-  @Index() // faster lookups
-  email!: string;
+  @Column({ type: "varchar", length: 255, unique: true })
+  @Index()
+  email?: string;
 
-  @Column({ length: 100, nullable: true })
-  name?: string; // optional full name
+  @Column({ type: "varchar", length: 100, nullable: true })
+  name?: string;
 
-  @Column({ default: "user", length: 50 })
-  role!: string; // e.g. "user", "admin", "moderator"
+  @Column({ type: "varchar", length: 50, default: "user" })
+  role?: string;
 
-  // Hashed password (never store plain text!)
-  @Column({ nullable: true, select: false }) // exclude from default queries
+  @Column({ type: "varchar", length: 255, nullable: true, select: false })
   passwordHash?: string;
 
-  // Optional: last login time (useful for security)
-  @Column({ type: "timestamp", nullable: true })
+  @Column({ type: "datetime", nullable: true })
   lastLogin?: Date;
 
-  // Relation to owned projects
-  @OneToMany(() => Project, (project) => project.user, {
-    cascade: ["insert", "update"], // auto-save projects when saving user
-    onDelete: "CASCADE", // delete projects when user is deleted
+  // Use string reference to avoid circular import
+  @OneToMany("Project", (project) => project.user, {
+    cascade: ["insert", "update"],
+    onDelete: "CASCADE",
   })
-  projects!: Project[];
+  projects?: Project[];
 
-  @CreateDateColumn()
-  createdAt!: Date;
+  @CreateDateColumn({ type: "datetime" })
+  createdAt?: Date;
 
-  @UpdateDateColumn()
-  updatedAt!: Date;
+  @UpdateDateColumn({ type: "datetime" })
+  updatedAt?: Date;
 
-  // Optional helper method: check if user is admin
+  @BeforeInsert()
+  @BeforeUpdate()
+  async hashPassword() {
+    if (this.passwordHash && !this.passwordHash.startsWith("$2")) {
+      this.passwordHash = await bcrypt.hash(this.passwordHash, 12);
+    }
+  }
+
+  async comparePassword(candidate: string): Promise<boolean> {
+    if (!this.passwordHash) return false;
+    return bcrypt.compare(candidate, this.passwordHash);
+  }
+
   isAdmin(): boolean {
     return this.role === "admin";
   }
