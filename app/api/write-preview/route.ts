@@ -39,37 +39,6 @@ function cleanContent(raw: unknown): string {
   return c.trim();
 }
 
-/**
- * Auto-correct broken "use client" directives before writing to disk.
- * This is the most reliable fix for models that keep omitting the opening quote.
- */
-function fixUseClientDirective(content: string): string {
-  const lines = content.split("\n");
-  if (lines.length === 0) return content;
-
-  const firstLine = lines[0].trim();
-
-  // Detect common broken patterns
-  const brokenPatterns = [
-    /^use\s*client["']?;?$/i,               // use client";  or use client"
-    /^["']?use\s*client"?;?$/i,             // "use client  or use client
-    /^["']use\s*client["']?$/i,             // "use client
-    /^["']use\s*client["'];?$/i,            // "use client;
-  ];
-
-  const isBroken = brokenPatterns.some(re => re.test(firstLine));
-
-  if (isBroken) {
-    console.log("[AUTO-FIX] Correcting broken 'use client' directive → \"use client\";");
-    lines[0] = '"use client";';
-    // Optional: ensure second line is not empty if needed
-    if (lines[1]?.trim() === "") {
-      lines.splice(1, 1);
-    }
-  }
-
-  return lines.join("\n");
-}
 
 function normalizePath(file: string): string | null {
   if (
@@ -147,17 +116,51 @@ async function restartDevServer() {
   isStarting = false;
 }
 
+/**
+ * Auto-correct broken "use client" directives before writing to disk.
+ */
+function fixUseClientDirective(content: string): string {
+  const lines = content.split("\n");
+  if (lines.length === 0) return content;
+
+  const firstLine = lines[0].trim();
+
+  // Detect common broken patterns (e.g. use client"; or "use client without semicolon)
+  const brokenPatterns = [
+    /^use\s*client["']?;?$/i,
+    /^["']?use\s*client"?;?$/i,
+    /^["']use\s*client["']?$/i,
+    /^["']use\s*client["'];?$/i,
+  ];
+
+  const isBroken = brokenPatterns.some(re => re.test(firstLine));
+
+  if (isBroken) {
+    console.log("[AUTO-FIX] Correcting broken 'use client' directive → \"use client\";");
+    lines[0] = '"use client";';
+    if (lines[1]?.trim() === "") {
+      lines.splice(1, 1);
+    }
+  }
+
+  return lines.join("\n");
+}
+
 /* -------------------- API -------------------- */
 
 export async function POST(req: NextRequest) {
   try {
-    const { frontendFiles } = await req.json();
+    const body = await req.json();
+    const { frontendFiles } = body;
 
     if (!frontendFiles || typeof frontendFiles !== "object") {
-      return NextResponse.json({ success: false }, { status: 400 });
+      console.error("[WRITE-PREVIEW] Invalid body:", body);
+      return NextResponse.json({ success: false, error: "Invalid body" }, { status: 400 });
     }
 
     const written: string[] = [];
+    const files = Object.entries(frontendFiles);
+    console.log(`[WRITE-PREVIEW] Received ${files.length} files to write.`);
 
     // Ensure layout exists (ONLY if missing)
     const layoutPath = path.join(PREVIEW_ROOT, "app/layout.tsx");
@@ -181,19 +184,24 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       written.push("app/layout.tsx (fallback)");
     }
 
-    for (const [file, raw] of Object.entries(frontendFiles)) {
+    for (const [file, raw] of files) {
       const normalized = normalizePath(file);
-      if (!normalized) continue;
+      if (!normalized) {
+        console.warn(`[WRITE-PREVIEW] Skipping invalid path: ${file}`);
+        continue;
+      }
 
       let content = cleanContent(raw);
-      if (!content) continue;
-
-      // Apply auto-fix for broken "use client" directives
-      content = fixUseClientDirective(content);
+      if (!content) {
+        console.warn(`[WRITE-PREVIEW] Content for ${file} resolved to empty after cleaning.`);
+        // Write a minimal component instead of nothing to avoid Next.js errors
+        content = `export default function Page() { return <div>Empty page generated for ${file}</div>; }`;
+      }
 
       const fullPath = path.join(PREVIEW_ROOT, normalized);
       await fs.mkdir(path.dirname(fullPath), { recursive: true });
       await fs.writeFile(fullPath, content, "utf-8");
+      console.log(`[WRITE-PREVIEW] Wrote ${normalized} (${content.length} chars)`);
 
       written.push(normalized);
     }

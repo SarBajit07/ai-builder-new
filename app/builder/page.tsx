@@ -45,7 +45,7 @@ function BuilderContent() {
   const loadProject = async (id: string) => {
     setLoadingProject(true);
     try {
-      const response = await fetch(`/api/projects?id=${id}`);
+      const response = await fetch(`/api/Projects?id=${id}`);
       if (response.ok) {
         const data = await response.json();
         setProject({
@@ -55,7 +55,8 @@ function BuilderContent() {
           side: "frontend",
         });
       } else {
-        console.error("Failed to load project");
+        const errorData = await response.json().catch(() => ({}));
+        console.error("Failed to load project:", response.status, errorData.error || response.statusText);
       }
     } catch (error) {
       console.error("Error loading project:", error);
@@ -69,7 +70,7 @@ function BuilderContent() {
     if (!projectId) return;
     setSaving(true);
     try {
-      await fetch("/api/projects", {
+      const response = await fetch("/api/Projects", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -78,7 +79,12 @@ function BuilderContent() {
           backendFiles: project.backendFiles,
         }),
       });
-      console.log("Project auto-saved ✅");
+      if (response.ok) {
+        console.log("Project auto-saved ✅");
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        console.error("Auto-save failed:", response.status, errorData.error || response.statusText);
+      }
     } catch (error) {
       console.error("Auto-save failed:", error);
     } finally {
@@ -164,9 +170,8 @@ function BuilderContent() {
               <button
                 key={view}
                 onClick={() => setActiveView(view)}
-                className={`px-2 sm:px-3 md:px-5 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-all flex-shrink-0 ${
-                  activeView === view ? "bg-purple-600/60 text-white shadow-md" : "text-gray-400 hover:bg-white/10"
-                }`}
+                className={`px-2 sm:px-3 md:px-5 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-all flex-shrink-0 ${activeView === view ? "bg-purple-600/60 text-white shadow-md" : "text-gray-400 hover:bg-white/10"
+                  }`}
               >
                 <span className="hidden sm:inline">{view.charAt(0).toUpperCase() + view.slice(1)}</span>
                 <span className="sm:hidden">{view.charAt(0).toUpperCase()}</span>
@@ -213,7 +218,7 @@ function BuilderContent() {
             projectId={projectId || undefined}
             onSave={async () => {
               // Your save logic here (e.g. API call)
-              await fetch("/api/projects", {
+              const response = await fetch("/api/Projects", {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -222,6 +227,10 @@ function BuilderContent() {
                   backendFiles: project.backendFiles,
                 }),
               });
+              if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                console.error("Manual save failed:", response.status, errorData.error || response.statusText);
+              }
             }}
           />
         </div>

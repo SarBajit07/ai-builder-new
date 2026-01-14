@@ -1,3 +1,1201 @@
-[00:00:01.581] Server  LOG      ✓ Ready in 1181ms
-[00:00:03.351] Server  WARN     ⚠ Cross origin request detected from 127.0.0.1 to /_next/* resource. In a future major version of Next.js, you will need to explicitly configure "allowedDevOrigins" in next.config to allow this.
+[00:00:01.454] Server  LOG      ✓ Ready in 995ms
+[00:00:02.572] Server  ERROR    ⨯ ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:1:5
+Parsing ecmascript source code failed
+> 1 | use client";
+    |     ^^^^^^
+  2 |
+  3 | import { useState } from 'react';
+  4 | import CounterButton from '../components/CounterButton';
+
+Expected ';', '}' or <eof>
+
+
+[00:00:03.779] Server  WARN     ⚠ Cross origin request detected from 127.0.0.1 to /_next/* resource. In a future major version of Next.js, you will need to explicitly configure "allowedDevOrigins" in next.config to allow this.
 Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+[00:00:03.786] Browser ERROR   uncaughtError: Error: ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:1:5
+Parsing ecmascript source code failed
+> 1 | use client";
+    |     ^^^^^^
+  2 |
+  3 | import { useState } from 'react';
+  4 | import CounterButton from '../components/CounterButton';
+
+Expected ';', '}' or <eof>
+
+
+[00:00:03.794] Server  ERROR    ⨯ ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:1:5
+Parsing ecmascript source code failed
+> 1 | use client";
+    |     ^^^^^^
+  2 |
+  3 | import { useState } from 'react';
+  4 | import CounterButton from '../components/CounterButton';
+
+Expected ';', '}' or <eof>
+
+
+[00:00:03.889] Browser ERROR   uncaughtError: Error: ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:1:5
+Parsing ecmascript source code failed
+> 1 | use client";
+    |     ^^^^^^
+  2 |
+  3 | import { useState } from 'react';
+  4 | import CounterButton from '../components/CounterButton';
+
+Expected ';', '}' or <eof>
+
+
+[00:00:04.047] Browser ERROR   ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:1:5
+Parsing ecmascript source code failed
+> 1 | use client";
+    |     ^^^^^^
+  2 |
+  3 | import { useState } from 'react';
+  4 | import CounterButton from '../components/CounterButton';
+
+Expected ';', '}' or <eof>
+[00:00:04.262] Browser ERROR   ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:1:5
+Parsing ecmascript source code failed
+> 1 | use client";
+    |     ^^^^^^
+  2 |
+  3 | import { useState } from 'react';
+  4 | import CounterButton from '../components/CounterButton';
+
+Expected ';', '}' or <eof>
+[00:00:09.756] Server  ERROR    ⨯ ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:1:5
+Parsing ecmascript source code failed
+> 1 | use client";
+    |     ^^^^^^
+  2 |
+  3 | import { useState } from 'react';
+  4 | import CounterButton from '../components/CounterButton';
+
+Expected ';', '}' or <eof>
+
+
+[00:00:09.827] Server  ERROR    ⨯ ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:3:1
+Module not found: Can't resolve '@/components/Footer'
+  1 | // app/page.tsx
+  2 | import { Header } from '@/components/Header';
+> 3 | import { Footer } from '@/components/Footer';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  4 | import ProductCard from '@/components/ProductCard';
+  5 | import dbClient from '@/lib/dbClient';
+  6 | import type { Product } from '@/types/product';
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:00:09.829] Server  ERROR    ⨯ ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:3:1
+Module not found: Can't resolve '@/components/Footer'
+  1 | // app/page.tsx
+  2 | import { Header } from '@/components/Header';
+> 3 | import { Footer } from '@/components/Footer';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  4 | import ProductCard from '@/components/ProductCard';
+  5 | import dbClient from '@/lib/dbClient';
+  6 | import type { Product } from '@/types/product';
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:00:09.830] Server  ERROR    ⨯ ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:2:1
+Module not found: Can't resolve '@/components/Header'
+  1 | // app/page.tsx
+> 2 | import { Header } from '@/components/Header';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 | import { Footer } from '@/components/Footer';
+  4 | import ProductCard from '@/components/ProductCard';
+  5 | import dbClient from '@/lib/dbClient';
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:00:09.831] Server  ERROR    ⨯ ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:2:1
+Module not found: Can't resolve '@/components/Header'
+  1 | // app/page.tsx
+> 2 | import { Header } from '@/components/Header';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 | import { Footer } from '@/components/Footer';
+  4 | import ProductCard from '@/components/ProductCard';
+  5 | import dbClient from '@/lib/dbClient';
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:00:09.833] Server  ERROR    ⨯ ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:4:1
+Module not found: Can't resolve '@/components/ProductCard'
+  2 | import { Header } from '@/components/Header';
+  3 | import { Footer } from '@/components/Footer';
+> 4 | import ProductCard from '@/components/ProductCard';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  5 | import dbClient from '@/lib/dbClient';
+  6 | import type { Product } from '@/types/product';
+  7 |
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:00:09.833] Server  ERROR    ⨯ ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:4:1
+Module not found: Can't resolve '@/components/ProductCard'
+  2 | import { Header } from '@/components/Header';
+  3 | import { Footer } from '@/components/Footer';
+> 4 | import ProductCard from '@/components/ProductCard';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  5 | import dbClient from '@/lib/dbClient';
+  6 | import type { Product } from '@/types/product';
+  7 |
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:00:09.834] Server  ERROR    ⨯ ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:5:1
+Module not found: Can't resolve '@/lib/dbClient'
+  3 | import { Footer } from '@/components/Footer';
+  4 | import ProductCard from '@/components/ProductCard';
+> 5 | import dbClient from '@/lib/dbClient';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import type { Product } from '@/types/product';
+  7 |
+  8 | export default async function Home() {
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:00:09.835] Server  ERROR    ⨯ ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:5:1
+Module not found: Can't resolve '@/lib/dbClient'
+  3 | import { Footer } from '@/components/Footer';
+  4 | import ProductCard from '@/components/ProductCard';
+> 5 | import dbClient from '@/lib/dbClient';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import type { Product } from '@/types/product';
+  7 |
+  8 | export default async function Home() {
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:00:09.852] Server  ERROR    ⨯ ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:3:1
+Module not found: Can't resolve '@/components/Footer'
+  1 | // app/page.tsx
+  2 | import { Header } from '@/components/Header';
+> 3 | import { Footer } from '@/components/Footer';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  4 | import ProductCard from '@/components/ProductCard';
+  5 | import dbClient from '@/lib/dbClient';
+  6 | import type { Product } from '@/types/product';
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:2:1
+Module not found: Can't resolve '@/components/Header'
+  1 | // app/page.tsx
+> 2 | import { Header } from '@/components/Header';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 | import { Footer } from '@/components/Footer';
+  4 | import ProductCard from '@/components/ProductCard';
+  5 | import dbClient from '@/lib/dbClient';
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:4:1
+Module not found: Can't resolve '@/components/ProductCard'
+  2 | import { Header } from '@/components/Header';
+  3 | import { Footer } from '@/components/Footer';
+> 4 | import ProductCard from '@/components/ProductCard';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  5 | import dbClient from '@/lib/dbClient';
+  6 | import type { Product } from '@/types/product';
+  7 |
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:5:1
+Module not found: Can't resolve '@/lib/dbClient'
+  3 | import { Footer } from '@/components/Footer';
+  4 | import ProductCard from '@/components/ProductCard';
+> 5 | import dbClient from '@/lib/dbClient';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import type { Product } from '@/types/product';
+  7 |
+  8 | export default async function Home() {
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:00:09.971] Browser ERROR   uncaughtError: Error: ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:3:1
+Module not found: Can't resolve '@/components/Footer'
+  1 | // app/page.tsx
+  2 | import { Header } from '@/components/Header';
+> 3 | import { Footer } from '@/components/Footer';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  4 | import ProductCard from '@/components/ProductCard';
+  5 | import dbClient from '@/lib/dbClient';
+  6 | import type { Product } from '@/types/product';
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:00:09.981] Server  ERROR    ⨯ ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:3:1
+Module not found: Can't resolve '@/components/Footer'
+  1 | // app/page.tsx
+  2 | import { Header } from '@/components/Header';
+> 3 | import { Footer } from '@/components/Footer';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  4 | import ProductCard from '@/components/ProductCard';
+  5 | import dbClient from '@/lib/dbClient';
+  6 | import type { Product } from '@/types/product';
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:2:1
+Module not found: Can't resolve '@/components/Header'
+  1 | // app/page.tsx
+> 2 | import { Header } from '@/components/Header';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 | import { Footer } from '@/components/Footer';
+  4 | import ProductCard from '@/components/ProductCard';
+  5 | import dbClient from '@/lib/dbClient';
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:4:1
+Module not found: Can't resolve '@/components/ProductCard'
+  2 | import { Header } from '@/components/Header';
+  3 | import { Footer } from '@/components/Footer';
+> 4 | import ProductCard from '@/components/ProductCard';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  5 | import dbClient from '@/lib/dbClient';
+  6 | import type { Product } from '@/types/product';
+  7 |
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:5:1
+Module not found: Can't resolve '@/lib/dbClient'
+  3 | import { Footer } from '@/components/Footer';
+  4 | import ProductCard from '@/components/ProductCard';
+> 5 | import dbClient from '@/lib/dbClient';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import type { Product } from '@/types/product';
+  7 |
+  8 | export default async function Home() {
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:00:10.099] Browser ERROR   uncaughtError: Error: ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:3:1
+Module not found: Can't resolve '@/components/Footer'
+  1 | // app/page.tsx
+  2 | import { Header } from '@/components/Header';
+> 3 | import { Footer } from '@/components/Footer';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  4 | import ProductCard from '@/components/ProductCard';
+  5 | import dbClient from '@/lib/dbClient';
+  6 | import type { Product } from '@/types/product';
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:00:10.243] Browser ERROR   ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:3:1
+Module not found: Can't resolve '@/components/Footer'
+  1 | // app/page.tsx
+  2 | import { Header } from '@/components/Header';
+> 3 | import { Footer } from '@/components/Footer';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  4 | import ProductCard from '@/components/ProductCard';
+  5 | import dbClient from '@/lib/dbClient';
+  6 | import type { Product } from '@/types/product';
+
+https://nextjs.org/docs/messages/module-not-found
+[00:00:10.243] Browser ERROR   ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:2:1
+Module not found: Can't resolve '@/components/Header'
+  1 | // app/page.tsx
+> 2 | import { Header } from '@/components/Header';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 | import { Footer } from '@/components/Footer';
+  4 | import ProductCard from '@/components/ProductCard';
+  5 | import dbClient from '@/lib/dbClient';
+
+https://nextjs.org/docs/messages/module-not-found
+[00:00:10.243] Browser ERROR   ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:4:1
+Module not found: Can't resolve '@/components/ProductCard'
+  2 | import { Header } from '@/components/Header';
+  3 | import { Footer } from '@/components/Footer';
+> 4 | import ProductCard from '@/components/ProductCard';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  5 | import dbClient from '@/lib/dbClient';
+  6 | import type { Product } from '@/types/product';
+  7 |
+
+https://nextjs.org/docs/messages/module-not-found
+[00:00:10.243] Browser ERROR   ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:5:1
+Module not found: Can't resolve '@/lib/dbClient'
+  3 | import { Footer } from '@/components/Footer';
+  4 | import ProductCard from '@/components/ProductCard';
+> 5 | import dbClient from '@/lib/dbClient';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import type { Product } from '@/types/product';
+  7 |
+  8 | export default async function Home() {
+
+https://nextjs.org/docs/messages/module-not-found
+[00:00:10.243] Browser ERROR   ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:3:1
+Module not found: Can't resolve '@/components/Footer'
+  1 | // app/page.tsx
+  2 | import { Header } from '@/components/Header';
+> 3 | import { Footer } from '@/components/Footer';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  4 | import ProductCard from '@/components/ProductCard';
+  5 | import dbClient from '@/lib/dbClient';
+  6 | import type { Product } from '@/types/product';
+
+https://nextjs.org/docs/messages/module-not-found
+[00:00:10.243] Browser ERROR   ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:2:1
+Module not found: Can't resolve '@/components/Header'
+  1 | // app/page.tsx
+> 2 | import { Header } from '@/components/Header';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 | import { Footer } from '@/components/Footer';
+  4 | import ProductCard from '@/components/ProductCard';
+  5 | import dbClient from '@/lib/dbClient';
+
+https://nextjs.org/docs/messages/module-not-found
+[00:00:10.243] Browser ERROR   ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:4:1
+Module not found: Can't resolve '@/components/ProductCard'
+  2 | import { Header } from '@/components/Header';
+  3 | import { Footer } from '@/components/Footer';
+> 4 | import ProductCard from '@/components/ProductCard';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  5 | import dbClient from '@/lib/dbClient';
+  6 | import type { Product } from '@/types/product';
+  7 |
+
+https://nextjs.org/docs/messages/module-not-found
+[00:00:10.243] Browser ERROR   ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:5:1
+Module not found: Can't resolve '@/lib/dbClient'
+  3 | import { Footer } from '@/components/Footer';
+  4 | import ProductCard from '@/components/ProductCard';
+> 5 | import dbClient from '@/lib/dbClient';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import type { Product } from '@/types/product';
+  7 |
+  8 | export default async function Home() {
+
+https://nextjs.org/docs/messages/module-not-found
+[00:00:14.631] Server  ERROR    ⨯ ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:3:1
+Module not found: Can't resolve '@/components/Footer'
+  1 | // app/page.tsx
+  2 | import { Header } from '@/components/Header';
+> 3 | import { Footer } from '@/components/Footer';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  4 | import ProductCard from '@/components/ProductCard';
+  5 | import dbClient from '@/lib/dbClient';
+  6 | import type { Product } from '@/types/product';
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:2:1
+Module not found: Can't resolve '@/components/Header'
+  1 | // app/page.tsx
+> 2 | import { Header } from '@/components/Header';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 | import { Footer } from '@/components/Footer';
+  4 | import ProductCard from '@/components/ProductCard';
+  5 | import dbClient from '@/lib/dbClient';
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:4:1
+Module not found: Can't resolve '@/components/ProductCard'
+  2 | import { Header } from '@/components/Header';
+  3 | import { Footer } from '@/components/Footer';
+> 4 | import ProductCard from '@/components/ProductCard';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  5 | import dbClient from '@/lib/dbClient';
+  6 | import type { Product } from '@/types/product';
+  7 |
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:5:1
+Module not found: Can't resolve '@/lib/dbClient'
+  3 | import { Footer } from '@/components/Footer';
+  4 | import ProductCard from '@/components/ProductCard';
+> 5 | import dbClient from '@/lib/dbClient';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import type { Product } from '@/types/product';
+  7 |
+  8 | export default async function Home() {
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:00:14.664] Server  ERROR    ⨯ ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:3:1
+Module not found: Can't resolve '@/components/Footer'
+  1 | // app/page.tsx
+  2 | import { Header } from '@/components/Header';
+> 3 | import { Footer } from '@/components/Footer';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  4 | import ProductCard from '@/components/ProductCard';
+  5 | import dbClient from '@/lib/dbClient';
+  6 | import type { Product } from '@/types/product';
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:2:1
+Module not found: Can't resolve '@/components/Header'
+  1 | // app/page.tsx
+> 2 | import { Header } from '@/components/Header';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 | import { Footer } from '@/components/Footer';
+  4 | import ProductCard from '@/components/ProductCard';
+  5 | import dbClient from '@/lib/dbClient';
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:4:1
+Module not found: Can't resolve '@/components/ProductCard'
+  2 | import { Header } from '@/components/Header';
+  3 | import { Footer } from '@/components/Footer';
+> 4 | import ProductCard from '@/components/ProductCard';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  5 | import dbClient from '@/lib/dbClient';
+  6 | import type { Product } from '@/types/product';
+  7 |
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:5:1
+Module not found: Can't resolve '@/lib/dbClient'
+  3 | import { Footer } from '@/components/Footer';
+  4 | import ProductCard from '@/components/ProductCard';
+> 5 | import dbClient from '@/lib/dbClient';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import type { Product } from '@/types/product';
+  7 |
+  8 | export default async function Home() {
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:00:14.824] Browser ERROR   uncaughtError: Error: ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:3:1
+Module not found: Can't resolve '@/components/Footer'
+  1 | // app/page.tsx
+  2 | import { Header } from '@/components/Header';
+> 3 | import { Footer } from '@/components/Footer';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  4 | import ProductCard from '@/components/ProductCard';
+  5 | import dbClient from '@/lib/dbClient';
+  6 | import type { Product } from '@/types/product';
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:00:14.839] Server  ERROR    ⨯ ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:3:1
+Module not found: Can't resolve '@/components/Footer'
+  1 | // app/page.tsx
+  2 | import { Header } from '@/components/Header';
+> 3 | import { Footer } from '@/components/Footer';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  4 | import ProductCard from '@/components/ProductCard';
+  5 | import dbClient from '@/lib/dbClient';
+  6 | import type { Product } from '@/types/product';
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:2:1
+Module not found: Can't resolve '@/components/Header'
+  1 | // app/page.tsx
+> 2 | import { Header } from '@/components/Header';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 | import { Footer } from '@/components/Footer';
+  4 | import ProductCard from '@/components/ProductCard';
+  5 | import dbClient from '@/lib/dbClient';
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:4:1
+Module not found: Can't resolve '@/components/ProductCard'
+  2 | import { Header } from '@/components/Header';
+  3 | import { Footer } from '@/components/Footer';
+> 4 | import ProductCard from '@/components/ProductCard';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  5 | import dbClient from '@/lib/dbClient';
+  6 | import type { Product } from '@/types/product';
+  7 |
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:5:1
+Module not found: Can't resolve '@/lib/dbClient'
+  3 | import { Footer } from '@/components/Footer';
+  4 | import ProductCard from '@/components/ProductCard';
+> 5 | import dbClient from '@/lib/dbClient';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import type { Product } from '@/types/product';
+  7 |
+  8 | export default async function Home() {
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:00:14.980] Browser ERROR   uncaughtError: Error: ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:3:1
+Module not found: Can't resolve '@/components/Footer'
+  1 | // app/page.tsx
+  2 | import { Header } from '@/components/Header';
+> 3 | import { Footer } from '@/components/Footer';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  4 | import ProductCard from '@/components/ProductCard';
+  5 | import dbClient from '@/lib/dbClient';
+  6 | import type { Product } from '@/types/product';
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:00:15.129] Browser ERROR   ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:3:1
+Module not found: Can't resolve '@/components/Footer'
+  1 | // app/page.tsx
+  2 | import { Header } from '@/components/Header';
+> 3 | import { Footer } from '@/components/Footer';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  4 | import ProductCard from '@/components/ProductCard';
+  5 | import dbClient from '@/lib/dbClient';
+  6 | import type { Product } from '@/types/product';
+
+https://nextjs.org/docs/messages/module-not-found
+[00:00:15.129] Browser ERROR   ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:2:1
+Module not found: Can't resolve '@/components/Header'
+  1 | // app/page.tsx
+> 2 | import { Header } from '@/components/Header';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 | import { Footer } from '@/components/Footer';
+  4 | import ProductCard from '@/components/ProductCard';
+  5 | import dbClient from '@/lib/dbClient';
+
+https://nextjs.org/docs/messages/module-not-found
+[00:00:15.129] Browser ERROR   ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:4:1
+Module not found: Can't resolve '@/components/ProductCard'
+  2 | import { Header } from '@/components/Header';
+  3 | import { Footer } from '@/components/Footer';
+> 4 | import ProductCard from '@/components/ProductCard';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  5 | import dbClient from '@/lib/dbClient';
+  6 | import type { Product } from '@/types/product';
+  7 |
+
+https://nextjs.org/docs/messages/module-not-found
+[00:00:15.129] Browser ERROR   ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:5:1
+Module not found: Can't resolve '@/lib/dbClient'
+  3 | import { Footer } from '@/components/Footer';
+  4 | import ProductCard from '@/components/ProductCard';
+> 5 | import dbClient from '@/lib/dbClient';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import type { Product } from '@/types/product';
+  7 |
+  8 | export default async function Home() {
+
+https://nextjs.org/docs/messages/module-not-found
+[00:00:15.129] Browser ERROR   ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:3:1
+Module not found: Can't resolve '@/components/Footer'
+  1 | // app/page.tsx
+  2 | import { Header } from '@/components/Header';
+> 3 | import { Footer } from '@/components/Footer';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  4 | import ProductCard from '@/components/ProductCard';
+  5 | import dbClient from '@/lib/dbClient';
+  6 | import type { Product } from '@/types/product';
+
+https://nextjs.org/docs/messages/module-not-found
+[00:00:15.129] Browser ERROR   ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:2:1
+Module not found: Can't resolve '@/components/Header'
+  1 | // app/page.tsx
+> 2 | import { Header } from '@/components/Header';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 | import { Footer } from '@/components/Footer';
+  4 | import ProductCard from '@/components/ProductCard';
+  5 | import dbClient from '@/lib/dbClient';
+
+https://nextjs.org/docs/messages/module-not-found
+[00:00:15.129] Browser ERROR   ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:4:1
+Module not found: Can't resolve '@/components/ProductCard'
+  2 | import { Header } from '@/components/Header';
+  3 | import { Footer } from '@/components/Footer';
+> 4 | import ProductCard from '@/components/ProductCard';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  5 | import dbClient from '@/lib/dbClient';
+  6 | import type { Product } from '@/types/product';
+  7 |
+
+https://nextjs.org/docs/messages/module-not-found
+[00:00:15.129] Browser ERROR   ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:5:1
+Module not found: Can't resolve '@/lib/dbClient'
+  3 | import { Footer } from '@/components/Footer';
+  4 | import ProductCard from '@/components/ProductCard';
+> 5 | import dbClient from '@/lib/dbClient';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import type { Product } from '@/types/product';
+  7 |
+  8 | export default async function Home() {
+
+https://nextjs.org/docs/messages/module-not-found
+[00:00:17.714] Server  ERROR    ⨯ ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:3:1
+Module not found: Can't resolve '@/components/Footer'
+  1 | // app/page.tsx
+  2 | import { Header } from '@/components/Header';
+> 3 | import { Footer } from '@/components/Footer';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  4 | import ProductCard from '@/components/ProductCard';
+  5 | import dbClient from '@/lib/dbClient';
+  6 | import type { Product } from '@/types/product';
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:2:1
+Module not found: Can't resolve '@/components/Header'
+  1 | // app/page.tsx
+> 2 | import { Header } from '@/components/Header';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 | import { Footer } from '@/components/Footer';
+  4 | import ProductCard from '@/components/ProductCard';
+  5 | import dbClient from '@/lib/dbClient';
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:4:1
+Module not found: Can't resolve '@/components/ProductCard'
+  2 | import { Header } from '@/components/Header';
+  3 | import { Footer } from '@/components/Footer';
+> 4 | import ProductCard from '@/components/ProductCard';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  5 | import dbClient from '@/lib/dbClient';
+  6 | import type { Product } from '@/types/product';
+  7 |
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:5:1
+Module not found: Can't resolve '@/lib/dbClient'
+  3 | import { Footer } from '@/components/Footer';
+  4 | import ProductCard from '@/components/ProductCard';
+> 5 | import dbClient from '@/lib/dbClient';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import type { Product } from '@/types/product';
+  7 |
+  8 | export default async function Home() {
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:00:17.737] Server  ERROR    ⨯ ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:3:1
+Module not found: Can't resolve '@/components/Footer'
+  1 | // app/page.tsx
+  2 | import { Header } from '@/components/Header';
+> 3 | import { Footer } from '@/components/Footer';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  4 | import ProductCard from '@/components/ProductCard';
+  5 | import dbClient from '@/lib/dbClient';
+  6 | import type { Product } from '@/types/product';
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:2:1
+Module not found: Can't resolve '@/components/Header'
+  1 | // app/page.tsx
+> 2 | import { Header } from '@/components/Header';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 | import { Footer } from '@/components/Footer';
+  4 | import ProductCard from '@/components/ProductCard';
+  5 | import dbClient from '@/lib/dbClient';
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:4:1
+Module not found: Can't resolve '@/components/ProductCard'
+  2 | import { Header } from '@/components/Header';
+  3 | import { Footer } from '@/components/Footer';
+> 4 | import ProductCard from '@/components/ProductCard';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  5 | import dbClient from '@/lib/dbClient';
+  6 | import type { Product } from '@/types/product';
+  7 |
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:5:1
+Module not found: Can't resolve '@/lib/dbClient'
+  3 | import { Footer } from '@/components/Footer';
+  4 | import ProductCard from '@/components/ProductCard';
+> 5 | import dbClient from '@/lib/dbClient';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import type { Product } from '@/types/product';
+  7 |
+  8 | export default async function Home() {
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:00:17.840] Browser ERROR   uncaughtError: Error: ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:3:1
+Module not found: Can't resolve '@/components/Footer'
+  1 | // app/page.tsx
+  2 | import { Header } from '@/components/Header';
+> 3 | import { Footer } from '@/components/Footer';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  4 | import ProductCard from '@/components/ProductCard';
+  5 | import dbClient from '@/lib/dbClient';
+  6 | import type { Product } from '@/types/product';
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:00:17.851] Server  ERROR    ⨯ ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:3:1
+Module not found: Can't resolve '@/components/Footer'
+  1 | // app/page.tsx
+  2 | import { Header } from '@/components/Header';
+> 3 | import { Footer } from '@/components/Footer';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  4 | import ProductCard from '@/components/ProductCard';
+  5 | import dbClient from '@/lib/dbClient';
+  6 | import type { Product } from '@/types/product';
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:2:1
+Module not found: Can't resolve '@/components/Header'
+  1 | // app/page.tsx
+> 2 | import { Header } from '@/components/Header';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 | import { Footer } from '@/components/Footer';
+  4 | import ProductCard from '@/components/ProductCard';
+  5 | import dbClient from '@/lib/dbClient';
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:4:1
+Module not found: Can't resolve '@/components/ProductCard'
+  2 | import { Header } from '@/components/Header';
+  3 | import { Footer } from '@/components/Footer';
+> 4 | import ProductCard from '@/components/ProductCard';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  5 | import dbClient from '@/lib/dbClient';
+  6 | import type { Product } from '@/types/product';
+  7 |
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:5:1
+Module not found: Can't resolve '@/lib/dbClient'
+  3 | import { Footer } from '@/components/Footer';
+  4 | import ProductCard from '@/components/ProductCard';
+> 5 | import dbClient from '@/lib/dbClient';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import type { Product } from '@/types/product';
+  7 |
+  8 | export default async function Home() {
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:00:17.962] Browser ERROR   uncaughtError: Error: ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:3:1
+Module not found: Can't resolve '@/components/Footer'
+  1 | // app/page.tsx
+  2 | import { Header } from '@/components/Header';
+> 3 | import { Footer } from '@/components/Footer';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  4 | import ProductCard from '@/components/ProductCard';
+  5 | import dbClient from '@/lib/dbClient';
+  6 | import type { Product } from '@/types/product';
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:00:18.116] Browser ERROR   ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:3:1
+Module not found: Can't resolve '@/components/Footer'
+  1 | // app/page.tsx
+  2 | import { Header } from '@/components/Header';
+> 3 | import { Footer } from '@/components/Footer';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  4 | import ProductCard from '@/components/ProductCard';
+  5 | import dbClient from '@/lib/dbClient';
+  6 | import type { Product } from '@/types/product';
+
+https://nextjs.org/docs/messages/module-not-found
+[00:00:18.117] Browser ERROR   ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:2:1
+Module not found: Can't resolve '@/components/Header'
+  1 | // app/page.tsx
+> 2 | import { Header } from '@/components/Header';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 | import { Footer } from '@/components/Footer';
+  4 | import ProductCard from '@/components/ProductCard';
+  5 | import dbClient from '@/lib/dbClient';
+
+https://nextjs.org/docs/messages/module-not-found
+[00:00:18.117] Browser ERROR   ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:4:1
+Module not found: Can't resolve '@/components/ProductCard'
+  2 | import { Header } from '@/components/Header';
+  3 | import { Footer } from '@/components/Footer';
+> 4 | import ProductCard from '@/components/ProductCard';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  5 | import dbClient from '@/lib/dbClient';
+  6 | import type { Product } from '@/types/product';
+  7 |
+
+https://nextjs.org/docs/messages/module-not-found
+[00:00:18.117] Browser ERROR   ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:5:1
+Module not found: Can't resolve '@/lib/dbClient'
+  3 | import { Footer } from '@/components/Footer';
+  4 | import ProductCard from '@/components/ProductCard';
+> 5 | import dbClient from '@/lib/dbClient';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import type { Product } from '@/types/product';
+  7 |
+  8 | export default async function Home() {
+
+https://nextjs.org/docs/messages/module-not-found
+[00:00:18.117] Browser ERROR   ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:3:1
+Module not found: Can't resolve '@/components/Footer'
+  1 | // app/page.tsx
+  2 | import { Header } from '@/components/Header';
+> 3 | import { Footer } from '@/components/Footer';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  4 | import ProductCard from '@/components/ProductCard';
+  5 | import dbClient from '@/lib/dbClient';
+  6 | import type { Product } from '@/types/product';
+
+https://nextjs.org/docs/messages/module-not-found
+[00:00:18.117] Browser ERROR   ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:2:1
+Module not found: Can't resolve '@/components/Header'
+  1 | // app/page.tsx
+> 2 | import { Header } from '@/components/Header';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 | import { Footer } from '@/components/Footer';
+  4 | import ProductCard from '@/components/ProductCard';
+  5 | import dbClient from '@/lib/dbClient';
+
+https://nextjs.org/docs/messages/module-not-found
+[00:00:18.117] Browser ERROR   ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:4:1
+Module not found: Can't resolve '@/components/ProductCard'
+  2 | import { Header } from '@/components/Header';
+  3 | import { Footer } from '@/components/Footer';
+> 4 | import ProductCard from '@/components/ProductCard';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  5 | import dbClient from '@/lib/dbClient';
+  6 | import type { Product } from '@/types/product';
+  7 |
+
+https://nextjs.org/docs/messages/module-not-found
+[00:00:18.117] Browser ERROR   ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:5:1
+Module not found: Can't resolve '@/lib/dbClient'
+  3 | import { Footer } from '@/components/Footer';
+  4 | import ProductCard from '@/components/ProductCard';
+> 5 | import dbClient from '@/lib/dbClient';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import type { Product } from '@/types/product';
+  7 |
+  8 | export default async function Home() {
+
+https://nextjs.org/docs/messages/module-not-found
+[00:00:42.412] Server  ERROR    ⨯ ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:3:1
+Module not found: Can't resolve '@/components/Footer'
+  1 | // app/page.tsx
+  2 | import { Header } from '@/components/Header';
+> 3 | import { Footer } from '@/components/Footer';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  4 | import ProductCard from '@/components/ProductCard';
+  5 | import dbClient from '@/lib/dbClient';
+  6 | import type { Product } from '@/types/product';
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:2:1
+Module not found: Can't resolve '@/components/Header'
+  1 | // app/page.tsx
+> 2 | import { Header } from '@/components/Header';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 | import { Footer } from '@/components/Footer';
+  4 | import ProductCard from '@/components/ProductCard';
+  5 | import dbClient from '@/lib/dbClient';
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:4:1
+Module not found: Can't resolve '@/components/ProductCard'
+  2 | import { Header } from '@/components/Header';
+  3 | import { Footer } from '@/components/Footer';
+> 4 | import ProductCard from '@/components/ProductCard';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  5 | import dbClient from '@/lib/dbClient';
+  6 | import type { Product } from '@/types/product';
+  7 |
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:5:1
+Module not found: Can't resolve '@/lib/dbClient'
+  3 | import { Footer } from '@/components/Footer';
+  4 | import ProductCard from '@/components/ProductCard';
+> 5 | import dbClient from '@/lib/dbClient';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import type { Product } from '@/types/product';
+  7 |
+  8 | export default async function Home() {
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:00:42.510] Browser ERROR   uncaughtError: Error: ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:3:1
+Module not found: Can't resolve '@/components/Footer'
+  1 | // app/page.tsx
+  2 | import { Header } from '@/components/Header';
+> 3 | import { Footer } from '@/components/Footer';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  4 | import ProductCard from '@/components/ProductCard';
+  5 | import dbClient from '@/lib/dbClient';
+  6 | import type { Product } from '@/types/product';
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:00:42.657] Browser ERROR   ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:3:1
+Module not found: Can't resolve '@/components/Footer'
+  1 | // app/page.tsx
+  2 | import { Header } from '@/components/Header';
+> 3 | import { Footer } from '@/components/Footer';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  4 | import ProductCard from '@/components/ProductCard';
+  5 | import dbClient from '@/lib/dbClient';
+  6 | import type { Product } from '@/types/product';
+
+https://nextjs.org/docs/messages/module-not-found
+[00:00:42.657] Browser ERROR   ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:2:1
+Module not found: Can't resolve '@/components/Header'
+  1 | // app/page.tsx
+> 2 | import { Header } from '@/components/Header';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 | import { Footer } from '@/components/Footer';
+  4 | import ProductCard from '@/components/ProductCard';
+  5 | import dbClient from '@/lib/dbClient';
+
+https://nextjs.org/docs/messages/module-not-found
+[00:00:42.658] Browser ERROR   ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:4:1
+Module not found: Can't resolve '@/components/ProductCard'
+  2 | import { Header } from '@/components/Header';
+  3 | import { Footer } from '@/components/Footer';
+> 4 | import ProductCard from '@/components/ProductCard';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  5 | import dbClient from '@/lib/dbClient';
+  6 | import type { Product } from '@/types/product';
+  7 |
+
+https://nextjs.org/docs/messages/module-not-found
+[00:00:42.658] Browser ERROR   ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:5:1
+Module not found: Can't resolve '@/lib/dbClient'
+  3 | import { Footer } from '@/components/Footer';
+  4 | import ProductCard from '@/components/ProductCard';
+> 5 | import dbClient from '@/lib/dbClient';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import type { Product } from '@/types/product';
+  7 |
+  8 | export default async function Home() {
+
+https://nextjs.org/docs/messages/module-not-found
+[00:00:42.658] Browser ERROR   ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:3:1
+Module not found: Can't resolve '@/components/Footer'
+  1 | // app/page.tsx
+  2 | import { Header } from '@/components/Header';
+> 3 | import { Footer } from '@/components/Footer';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  4 | import ProductCard from '@/components/ProductCard';
+  5 | import dbClient from '@/lib/dbClient';
+  6 | import type { Product } from '@/types/product';
+
+https://nextjs.org/docs/messages/module-not-found
+[00:00:42.658] Browser ERROR   ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:2:1
+Module not found: Can't resolve '@/components/Header'
+  1 | // app/page.tsx
+> 2 | import { Header } from '@/components/Header';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 | import { Footer } from '@/components/Footer';
+  4 | import ProductCard from '@/components/ProductCard';
+  5 | import dbClient from '@/lib/dbClient';
+
+https://nextjs.org/docs/messages/module-not-found
+[00:00:42.658] Browser ERROR   ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:4:1
+Module not found: Can't resolve '@/components/ProductCard'
+  2 | import { Header } from '@/components/Header';
+  3 | import { Footer } from '@/components/Footer';
+> 4 | import ProductCard from '@/components/ProductCard';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  5 | import dbClient from '@/lib/dbClient';
+  6 | import type { Product } from '@/types/product';
+  7 |
+
+https://nextjs.org/docs/messages/module-not-found
+[00:00:42.658] Browser ERROR   ./Desktop/nayyyaaa ai builder/ai-builder/ai-preview/app/page.tsx:5:1
+Module not found: Can't resolve '@/lib/dbClient'
+  3 | import { Footer } from '@/components/Footer';
+  4 | import ProductCard from '@/components/ProductCard';
+> 5 | import dbClient from '@/lib/dbClient';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import type { Product } from '@/types/product';
+  7 |
+  8 | export default async function Home() {
+
+https://nextjs.org/docs/messages/module-not-found
