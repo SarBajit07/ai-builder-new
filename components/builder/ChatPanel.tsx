@@ -1,6 +1,16 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"; // ← now correctly imported after installing
+import { cn } from "@/lib/utils";
 
 interface Project {
   frontendFiles: Record<string, string>;
@@ -12,15 +22,69 @@ interface Project {
 interface ChatPanelProps {
   project: Project;
   setProject: React.Dispatch<React.SetStateAction<Project>>;
-  projectId?: string; // optional, for saving to backend if needed
-  onSave?: (project: Project) => Promise<void>; // optional save callback
+  projectId?: string;
+  onSave?: (project: Project) => Promise<void>;
 }
+
+// Model list with icons (emoji for now – replace with real images later)
+const AVAILABLE_MODELS = [
+  {
+    value: "llama3.1:8b",
+    label: "Llama 3.1 8B",
+    provider: "Ollama",
+    icon: "🦙",
+  },
+  {
+    value: "qwen2.5-coder:3b-instruct-q6_K",
+    label: "Qwen 2.5 Coder 3B",
+    provider: "Ollama",
+    icon: "/icons/qwen.svg",
+  },
+  {
+    value: "qwen2.5-coder:7b-instruct-q5_K_M",
+    label: "Qwen 2.5 Coder 7B (Q5_K_M)",
+    provider: "Ollama",
+    icon: "/icons/qwen.svg",
+  },
+  {
+    value: "qwen2.5-coder:7b-instruct",
+    label: "Qwen 2.5 Coder 7B (Instruct)",
+    provider: "Ollama",
+    icon: "/icons/qwen.svg",
+  },
+  {
+    value: "qwen2.5:7b",
+    label: "Qwen 2.5 7B",
+    provider: "Ollama",
+    icon: "❓",
+  },
+  {
+    value: "deepseek-coder:6.7b",
+    label: "DeepSeek Coder 6.7B",
+    provider: "Ollama",
+    icon: "🔍",
+  },
+  {
+    value: "llama3:latest",
+    label: "Llama 3",
+    provider: "Ollama",
+    icon: "🦙",
+  },
+];
 
 export default function ChatPanel({ project, setProject, projectId, onSave }: ChatPanelProps) {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [messages, setMessages] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
+  const [selectedModel, setSelectedModel] = useState<string>(() => {
+    // Load preferred model from localStorage (client-only)
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("preferredModel") || "gpt-4o";
+    }
+    return "gpt-4o";
+  });
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Auto-scroll to bottom
@@ -28,7 +92,11 @@ export default function ChatPanel({ project, setProject, projectId, onSave }: Ch
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Handle agent response
+  // Persist selected model
+  useEffect(() => {
+    localStorage.setItem("preferredModel", selectedModel);
+  }, [selectedModel]);
+
   const applyAgentActions = ({ files, message }: { files?: Record<string, string>; message?: string }) => {
     if (!files || Object.keys(files).length === 0) {
       setMessages((prev) => [...prev, "Agent: No valid file changes found 🤔"]);
@@ -69,47 +137,38 @@ export default function ChatPanel({ project, setProject, projectId, onSave }: Ch
     setMessages((prev) => [...prev, `You: ${prompt}`]);
     setInput("");
 
-    // Show typing indicator
     setMessages((prev) => [...prev, "Agent is thinking..."]);
 
     try {
       const res = await fetch("/api/agent", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt, project }),
+        body: JSON.stringify({
+          prompt,
+          project,
+          model: selectedModel, // ← passed to backend
+        }),
       });
 
       if (!res.ok) {
-        const errorText = await res.text().catch(() => "Unknown error");
-        throw new Error(`Server error ${res.status}: ${errorText}`);
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.error || `Server error ${res.status}`);
       }
 
       const data = await res.json();
 
-      if (!data.success) {
-        throw new Error(data.error || "AI agent failed");
-      }
+      if (!data.success) throw new Error(data.error || "AI agent failed");
 
-      // Remove typing indicator
       setMessages((prev) => prev.filter((msg) => msg !== "Agent is thinking..."));
 
       applyAgentActions({
         files: data.files,
         message: data.message,
       });
-
-      if (process.env.NODE_ENV === "development" && data.raw) {
-        console.log("Raw agent response:", data.raw);
-      }
     } catch (err: any) {
-      console.error("Agent request failed:", err);
-
+      console.error("Agent error:", err);
       setMessages((prev) => prev.filter((msg) => msg !== "Agent is thinking..."));
-
-      setMessages((prev) => [
-        ...prev,
-        `Error: ${err.message || "Something went wrong. Try again."}`,
-      ]);
+      setMessages((prev) => [...prev, `Error: ${err.message || "Try again"}`]);
     } finally {
       setLoading(false);
     }
@@ -135,49 +194,118 @@ export default function ChatPanel({ project, setProject, projectId, onSave }: Ch
   };
 
   return (
-    <div className="flex h-full flex-col bg-gradient-to-b from-gray-950 to-black text-white">
-      {/* Header */}
-      <div className="p-4 border-b border-gray-800 flex justify-between items-center">
-        <h2 className="text-lg font-semibold">AI Agent</h2>
-        <div className="flex gap-3">
-          {onSave && (
-            <button
-              onClick={handleSave}
-              disabled={saving}
-              className="text-sm px-3 py-1 bg-blue-600 hover:bg-blue-700 rounded disabled:opacity-50 transition"
+    <div className="flex h-full flex-col bg-gradient-to-b from-[#0A0A0A] to-black text-white">
+      {/* Header with Model Selector */}
+      <div className="p-4 border-b border-white/5 space-y-4 bg-[#111]/60 backdrop-blur-sm">
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-semibold tracking-tight">AI Agent</h2>
+          <div className="flex items-center gap-2">
+            {onSave && (
+              <Button
+                size="sm"
+                onClick={handleSave}
+                disabled={saving}
+                className="rounded-full bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-900/20 transition-all border border-emerald-500/50"
+              >
+                {saving ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 mr-2 animate-spin" />
+                    Saving
+                  </>
+                ) : (
+                  "Save"
+                )}
+              </Button>
+            )}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={clearChat}
+              title="Clear chat"
+              className="text-zinc-500 hover:text-white hover:bg-white/5 transition-colors"
             >
-              {saving ? "Saving..." : "Save Project"}
-            </button>
-          )}
-          <button
-            onClick={clearChat}
-            className="text-sm text-gray-400 hover:text-white transition"
-          >
-            Clear
-          </button>
+              Clear
+            </Button>
+          </div>
         </div>
+
+        {/* Model Selector - Full Width */}
+        <Select value={selectedModel} onValueChange={setSelectedModel}>
+          <SelectTrigger className="w-full h-10 rounded-xl border-zinc-800 bg-zinc-900/50 text-sm text-zinc-300 focus:ring-emerald-500/20 hover:bg-zinc-900 transition-colors">
+            <div className="flex items-center gap-2">
+              <span className="text-base flex items-center justify-center">
+                {(() => {
+                  const icon = AVAILABLE_MODELS.find(m => m.value === selectedModel)?.icon || "🤖";
+                  return icon.startsWith("/") ? (
+                    <img src={icon} alt="" className="w-5 h-5 object-contain" />
+                  ) : (
+                    icon
+                  );
+                })()}
+              </span>
+              <span className="truncate">
+                {AVAILABLE_MODELS.find(m => m.value === selectedModel)?.label || "Select Model"}
+              </span>
+            </div>
+          </SelectTrigger>
+          <SelectContent position="popper" sideOffset={5} className="bg-[#111] border-zinc-800 text-zinc-200 max-h-80 overflow-y-auto scrollbar-modern z-[100]">
+            {AVAILABLE_MODELS.map((model) => (
+              <SelectItem
+                key={model.value}
+                value={model.value}
+                className="focus:bg-emerald-950/30 focus:text-emerald-400 py-3 px-3 cursor-pointer border-b border-white/5 last:border-0"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="text-xl flex-shrink-0 flex items-center justify-center w-6">
+                    {model.icon.startsWith("/") ? (
+                      <img src={model.icon} alt={model.label} className="w-5 h-5 object-contain" />
+                    ) : (
+                      model.icon
+                    )}
+                  </span>
+                  <div className="flex flex-col gap-0.5">
+                    <span className="font-medium text-sm">{model.label}</span>
+                    <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-semibold">{model.provider}</span>
+                  </div>
+                </div>
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
-      {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-thumb-gray-700">
+      {/* Messages area */}
+      <div
+        className={cn(
+          "flex-1 overflow-y-auto p-4 sm:p-5 space-y-4",
+          "scrollbar-modern"
+        )}
+      >
         {messages.length === 0 && (
-          <div className="text-center text-gray-500 mt-10">
-            Ask the AI to build or modify your UI...
+          <div className="flex flex-col items-center justify-center h-full text-center text-zinc-500">
+            <div className="w-16 h-16 rounded-2xl bg-zinc-900/50 flex items-center justify-center mb-4">
+              <span className="text-3xl">🤖</span>
+            </div>
+            <p className="text-base">Ask the AI to build or modify your UI...</p>
+            <p className="text-sm mt-2 text-zinc-600">
+              Example: "Add a dark mode toggle button in the header"
+            </p>
           </div>
         )}
 
         {messages.map((msg, i) => (
           <div
             key={i}
-            className={`whitespace-pre-wrap p-3 rounded-lg max-w-[85%] text-sm leading-relaxed ${
+            className={cn(
+              "whitespace-pre-wrap p-3.5 rounded-2xl text-sm leading-relaxed max-w-[90%]",
               msg.startsWith("You:")
-                ? "bg-blue-900/40 ml-auto"
+                ? "bg-emerald-900/20 border border-emerald-500/20 ml-auto"
                 : msg.startsWith("Error:")
-                  ? "bg-red-900/40"
+                  ? "bg-red-900/30 border border-red-500/20"
                   : msg === "Agent is thinking..."
-                    ? "bg-gray-800/60 italic text-gray-400 animate-pulse"
-                    : "bg-gray-800/60 mr-auto"
-            }`}
+                    ? "bg-zinc-900/60 italic text-zinc-400 animate-pulse"
+                    : "bg-zinc-900/60 border border-white/5 mr-auto"
+            )}
           >
             {msg}
           </div>
@@ -187,7 +315,7 @@ export default function ChatPanel({ project, setProject, projectId, onSave }: Ch
       </div>
 
       {/* Input area */}
-      <div className="p-4 border-t border-gray-800">
+      <div className="p-4 border-t border-white/5 bg-[#111]/60 backdrop-blur-sm">
         <div className="flex gap-3">
           <input
             value={input}
@@ -199,17 +327,17 @@ export default function ChatPanel({ project, setProject, projectId, onSave }: Ch
               }
             }}
             disabled={loading}
-            className="flex-1 rounded-lg bg-gray-900/70 border border-gray-700 px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-blue-600 disabled:opacity-50"
-            placeholder="Ask the agent to build or modify... (e.g. add dark mode toggle)"
+            placeholder="Ask the agent to build or modify... (Shift+Enter for new line)"
+            className="flex-1 rounded-xl bg-zinc-900/70 border border-zinc-800 px-4 py-3 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/30 disabled:opacity-50 transition-all"
           />
 
-          <button
+          <Button
             onClick={send}
             disabled={loading || !input.trim()}
-            className="px-6 rounded-lg bg-blue-700 hover:bg-blue-600 active:bg-blue-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+            className="rounded-xl bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 px-6 font-medium disabled:opacity-50 transition-colors"
           >
             {loading ? "Thinking..." : "Send"}
-          </button>
+          </Button>
         </div>
       </div>
     </div>

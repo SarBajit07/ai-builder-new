@@ -24,7 +24,8 @@ function cleanContent(raw: unknown): string {
     .replace(/^json\s*/i, "")
     .trim();
 
-  c = c.replace(/^["']/, "").replace(/["']$/, "");
+  // REMOVED: c = c.replace(/^["']/, "").replace(/["']$/, "");
+  // This was stripping the opening quote of "use client"; if it was the first line.
 
   for (let i = 0; i < 3; i++) {
     try {
@@ -197,6 +198,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         // Write a minimal component instead of nothing to avoid Next.js errors
         content = `export default function Page() { return <div>Empty page generated for ${file}</div>; }`;
       }
+
+      // Apply auto-fix for broken "use client" directives
+      content = fixUseClientDirective(content);
 
       const fullPath = path.join(PREVIEW_ROOT, normalized);
       await fs.mkdir(path.dirname(fullPath), { recursive: true });

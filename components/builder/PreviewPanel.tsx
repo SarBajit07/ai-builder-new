@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ChevronLeft, ChevronRight, RotateCcw, Lock, RefreshCw } from "lucide-react";
+import { AlertTriangle, Loader2, RotateCcw } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface PreviewPanelProps {
   project: {
@@ -13,29 +14,31 @@ export default function PreviewPanel({ project }: PreviewPanelProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [status, setStatus] = useState("Initializing preview...");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const previewBase = "http://127.0.0.1:3001"; // Use 127.0.0.1 instead of localhost (more reliable on Windows)
+  const previewBase = "http://127.0.0.1:3001"; // or use process.env.NEXT_PUBLIC_PREVIEW_URL
 
-  // Set initial src immediately
+  // Initial load
   useEffect(() => {
     if (iframeRef.current) {
       iframeRef.current.src = `${previewBase}?t=${Date.now()}`;
-      setStatus("Connecting to preview server...");
     }
   }, []);
 
-  // Handle file changes → write files & reload
+  // Handle file changes → write files & reload iframe
   useEffect(() => {
     if (Object.keys(project.frontendFiles).length === 0) {
-      setStatus("Waiting for AI to generate files...");
+      setStatus("Waiting for files to be generated...");
       setErrorMsg(null);
+      setIsLoading(false);
       return;
     }
 
     const controller = new AbortController();
 
     const updatePreview = async () => {
-      setStatus("Saving files & (re)starting preview server...");
+      setIsLoading(true);
+      setStatus("Saving files & restarting preview...");
       setErrorMsg(null);
 
       try {
@@ -47,26 +50,27 @@ export default function PreviewPanel({ project }: PreviewPanelProps) {
         });
 
         if (!res.ok) {
-          const text = await res.text().catch(() => "Unknown error");
-          throw new Error(`Write failed (${res.status}): ${text}`);
+          const errData = await res.json().catch(() => ({}));
+          throw new Error(errData.error || `Write failed (${res.status})`);
         }
 
-        // Give server time to boot/restart (first time can take 5–10s)
-        await new Promise((resolve) => setTimeout(resolve, 3000));
+        // Give server time to process / restart (adjust if needed)
+        await new Promise((r) => setTimeout(r, 2500));
 
         setStatus("Reloading preview...");
 
-        // Force fresh load with strong cache busting
         if (iframeRef.current) {
-          iframeRef.current.src = `${previewBase}?t=${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
+          // Strong cache busting
+          const timestamp = Date.now() + Math.random().toString(36).slice(2, 10);
+          iframeRef.current.src = `${previewBase}?t=${timestamp}`;
         }
-
-        setStatus("Preview loading...");
       } catch (err: any) {
         if (err.name === "AbortError") return;
-        console.error("Preview update failed:", err);
-        setErrorMsg(err.message || "Failed to update preview");
+        console.error("Preview update error:", err);
+        setErrorMsg(err.message || "Failed to update preview server");
         setStatus("Error");
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -75,7 +79,7 @@ export default function PreviewPanel({ project }: PreviewPanelProps) {
     return () => controller.abort();
   }, [project.frontendFiles]);
 
-  // Detect successful load
+  // Iframe load/error detection
   useEffect(() => {
     const iframe = iframeRef.current;
     if (!iframe) return;
@@ -83,11 +87,13 @@ export default function PreviewPanel({ project }: PreviewPanelProps) {
     const onLoad = () => {
       setStatus("Live ✓");
       setErrorMsg(null);
+      setIsLoading(false);
     };
 
     const onError = () => {
-      setStatus("Preview failed to load");
-      setErrorMsg("Connection refused or server error – check terminal");
+      setStatus("Preview unavailable");
+      setErrorMsg("Could not connect to preview server. Check terminal logs.");
+      setIsLoading(false);
     };
 
     iframe.addEventListener("load", onLoad);
@@ -100,26 +106,62 @@ export default function PreviewPanel({ project }: PreviewPanelProps) {
   }, []);
 
   return (
-    <div className="relative h-full w-full bg-black rounded-lg overflow-hidden border border-neutral-800">
+    <div className="relative h-full w-full bg-[#0A0A0A] rounded-2xl overflow-hidden border border-white/5 shadow-2xl">
+      {/* Iframe itself */}
       <iframe
         ref={iframeRef}
         src={`${previewBase}?t=${Date.now()}`}
         className="h-full w-full border-0"
-        sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-modals allow-storage-access-by-user-activation allow-top-navigation"
-        allow="cross-origin-isolated; camera; microphone; geolocation; clipboard-write"
-        title="Live Preview"
+        sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-modals allow-storage-access-by-user-activation allow-top-navigation-by-user-activation"
+        allow="cross-origin-isolated; camera; microphone; geolocation; clipboard-write; autoplay"
+        title="Live App Preview"
         loading="lazy"
       />
 
-      {/* Status overlay */}
-      <div className="absolute top-3 left-3 z-50 px-4 py-2 rounded-lg text-sm font-mono backdrop-blur-lg bg-black/80 border border-white/20 shadow-lg">
-        {status}
+      {/* Overlay status – glassmorphism style like Dashboard */}
+      <div
+        className={cn(
+          "absolute top-4 left-4 z-50 px-4 py-2.5 rounded-xl text-sm font-medium backdrop-blur-xl border shadow-lg transition-all duration-300",
+          errorMsg
+            ? "bg-red-950/60 border-red-500/30 text-red-300"
+            : isLoading
+              ? "bg-zinc-900/70 border-white/10 text-zinc-300 animate-pulse"
+              : "bg-emerald-950/40 border-emerald-500/30 text-emerald-300"
+        )}
+      >
+        <div className="flex items-center gap-2">
+          {isLoading && <Loader2 className="w-4 h-4 animate-spin" />}
+          {errorMsg && <AlertTriangle className="w-4 h-4" />}
+          <span>{status}</span>
+        </div>
+
         {errorMsg && (
-          <div className="mt-1 text-red-400 text-xs max-w-[320px] break-all">
+          <p className="mt-1.5 text-xs text-red-200/80 max-w-[340px] break-words">
             {errorMsg}
-          </div>
+          </p>
+        )}
+
+        {isLoading && !errorMsg && (
+          <p className="mt-1 text-xs text-zinc-500">
+            This may take a few seconds on first load
+          </p>
         )}
       </div>
+
+      {/* Optional refresh button in corner */}
+      {!isLoading && !errorMsg && (
+        <button
+          onClick={() => {
+            if (iframeRef.current) {
+              iframeRef.current.src = `${previewBase}?t=${Date.now()}`;
+            }
+          }}
+          className="absolute top-4 right-4 z-50 p-2 rounded-full bg-zinc-900/70 border border-white/10 text-zinc-400 hover:text-white hover:bg-zinc-800/80 transition-colors"
+          title="Refresh preview"
+        >
+          <RotateCcw className="w-4 h-4" />
+        </button>
+      )}
     </div>
   );
 }

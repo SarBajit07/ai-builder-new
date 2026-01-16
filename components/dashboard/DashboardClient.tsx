@@ -27,7 +27,7 @@ import {
   MoreVertical,
   Terminal,
 } from "lucide-react";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
@@ -112,7 +112,7 @@ export default function DashboardClient({ user }: DashboardClientProps) {
   const fetchProjects = async () => {
     try {
       setError(null);
-      const response = await fetch("/api/Projects");
+      const response = await fetch("/api/projects");
       if (response.ok) {
         const data = await response.json();
         setProjects(data);
@@ -159,7 +159,7 @@ export default function DashboardClient({ user }: DashboardClientProps) {
 
     setCreating(true);
     try {
-      const response = await fetch("/api/Projects", {
+      const response = await fetch("/api/projects", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -202,7 +202,7 @@ export default function DashboardClient({ user }: DashboardClientProps) {
     }
 
     try {
-      const response = await fetch("/api/Projects", {
+      const response = await fetch("/api/projects", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -230,7 +230,7 @@ export default function DashboardClient({ user }: DashboardClientProps) {
   const handleDelete = async (projectId: string) => {
     setDeletingProject(projectId);
     try {
-      const response = await fetch(`/api/Projects?id=${projectId}`, {
+      const response = await fetch(`/api/projects?id=${projectId}`, {
         method: "DELETE",
       });
 
@@ -290,7 +290,7 @@ export default function DashboardClient({ user }: DashboardClientProps) {
 
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" as const } },
   };
 
   return (

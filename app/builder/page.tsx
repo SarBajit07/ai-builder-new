@@ -4,12 +4,23 @@ import { useState, useEffect, useCallback, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { motion } from "framer-motion";
+import {
+  LayoutDashboard,
+  User as UserIcon,
+  Code2,
+  Eye,
+  Square,
+  Database,
+  Loader2,
+  RotateCcw,
+} from "lucide-react";
 import ChatPanel from "@/components/builder/ChatPanel";
 import PreviewPanel from "@/components/builder/PreviewPanel";
 import CodeEditor from "@/components/builder/CodeEditor";
 import LogoutButton from "@/components/builder/LogoutButton";
 import { ProjectState } from "@/types/project";
-import { LayoutDashboard, User as UserIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 function BuilderContent() {
   const { data: session, status } = useSession();
@@ -28,14 +39,12 @@ function BuilderContent() {
   const [loadingProject, setLoadingProject] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  // Redirect to login if not authenticated
   useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/login");
     }
   }, [status, router]);
 
-  // Load project from database if projectId exists
   useEffect(() => {
     if (status === "authenticated" && projectId) {
       loadProject(projectId);
@@ -45,7 +54,7 @@ function BuilderContent() {
   const loadProject = async (id: string) => {
     setLoadingProject(true);
     try {
-      const response = await fetch(`/api/Projects?id=${id}`);
+      const response = await fetch(`/api/projects?id=${id}`);
       if (response.ok) {
         const data = await response.json();
         setProject({
@@ -55,8 +64,7 @@ function BuilderContent() {
           side: "frontend",
         });
       } else {
-        const errorData = await response.json().catch(() => ({}));
-        console.error("Failed to load project:", response.status, errorData.error || response.statusText);
+        console.error("Failed to load project:", await response.json().catch(() => ({})));
       }
     } catch (error) {
       console.error("Error loading project:", error);
@@ -65,12 +73,11 @@ function BuilderContent() {
     }
   };
 
-  // Save project to database
   const saveProject = async () => {
     if (!projectId) return;
     setSaving(true);
     try {
-      const response = await fetch("/api/Projects", {
+      const response = await fetch("/api/projects", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -82,8 +89,7 @@ function BuilderContent() {
       if (response.ok) {
         console.log("Project auto-saved ✅");
       } else {
-        const errorData = await response.json().catch(() => ({}));
-        console.error("Auto-save failed:", response.status, errorData.error || response.statusText);
+        console.error("Auto-save failed:", await response.json().catch(() => ({})));
       }
     } catch (error) {
       console.error("Auto-save failed:", error);
@@ -92,13 +98,9 @@ function BuilderContent() {
     }
   };
 
-  // Debounced auto-save when files change
   useEffect(() => {
     if (!projectId) return;
-    const timer = setTimeout(() => {
-      saveProject();
-    }, 3000); // 3 seconds debounce
-
+    const timer = setTimeout(saveProject, 3000);
     return () => clearTimeout(timer);
   }, [project.frontendFiles, project.backendFiles, projectId]);
 
@@ -109,10 +111,7 @@ function BuilderContent() {
   const handleFileChange = useCallback((path: string, content: string) => {
     setProject((prev) => ({
       ...prev,
-      frontendFiles: {
-        ...prev.frontendFiles,
-        [path]: content,
-      },
+      frontendFiles: { ...prev.frontendFiles, [path]: content },
     }));
   }, []);
 
@@ -130,165 +129,149 @@ function BuilderContent() {
     }
   };
 
-  // Show loading state
   if (status === "loading" || loadingProject) {
     return (
-      <div className="flex items-center justify-center h-screen bg-black text-white">
+      <div className="min-h-screen bg-[#0A0A0A] flex items-center justify-center">
         <div className="text-center">
-          <div className="w-8 h-8 border-4 border-purple-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <Loader2 className="w-10 h-10 animate-spin text-emerald-500 mx-auto mb-4" />
           <p className="text-zinc-400">
-            {loadingProject ? "Loading project..." : "Loading..."}
+            {loadingProject ? "Loading project..." : "Loading session..."}
           </p>
         </div>
       </div>
     );
   }
 
-  // Don't render if not authenticated (redirect already handled)
-  if (status === "unauthenticated" || !session) {
-    return null;
-  }
+  if (status === "unauthenticated" || !session) return null;
 
   return (
-    <div className="flex flex-col h-screen w-screen bg-black text-white overflow-hidden">
-      {/* Top Navigation */}
-      <header className="fixed top-0 left-0 right-0 z-50 h-14 bg-black/80 backdrop-blur-md border-b border-white/10 flex items-center px-2 sm:px-4">
-        <div className="flex items-center justify-between w-full max-w-7xl mx-auto gap-2">
+    <div className="min-h-screen bg-[#0A0A0A] text-white flex flex-col overflow-hidden">
+      {/* Header */}
+      <header className="sticky top-0 z-50 bg-[#0A0A0A]/80 backdrop-blur-xl border-b border-white/5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           {/* Logo */}
-          <Link href="/dashboard" className="flex items-center gap-2 sm:gap-3 hover:opacity-80 transition-opacity">
-            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-purple-600 to-pink-500 flex items-center justify-center text-white font-bold text-lg sm:text-xl">
+          <Link href="/dashboard" className="flex items-center gap-3 hover:opacity-90 transition-opacity">
+            <div className="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center text-black font-bold text-xl">
               B
             </div>
-            <span className="text-sm sm:text-lg font-semibold tracking-tight hidden sm:inline">
-              AI Builder
-            </span>
+            <span className="font-semibold text-lg hidden sm:block tracking-tight">AI Builder</span>
           </Link>
 
-          {/* View Toggle Buttons */}
-          <div className="hidden sm:flex items-center gap-1 bg-black/60 rounded-full p-1 border border-white/10 shadow-lg flex-1 justify-center max-w-md mx-2">
-            {(["code", "preview", "window", "database"] as const).map((view) => (
+          {/* View toggles */}
+          <div className="hidden md:flex items-center gap-1 bg-white/5 border border-white/10 rounded-xl p-1">
+            {[
+              { id: "code", icon: Code2, label: "Code" },
+              { id: "preview", icon: Eye, label: "Preview" },
+              { id: "window", icon: Square, label: "Window" },
+              { id: "database", icon: Database, label: "DB" },
+            ].map((v) => (
               <button
-                key={view}
-                onClick={() => setActiveView(view)}
-                className={`px-2 sm:px-3 md:px-5 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-all flex-shrink-0 ${activeView === view ? "bg-purple-600/60 text-white shadow-md" : "text-gray-400 hover:bg-white/10"
-                  }`}
+                key={v.id}
+                onClick={() => setActiveView(v.id as any)}
+                className={cn(
+                  "px-3 py-1.5 rounded-lg text-sm font-medium transition-all flex items-center gap-2",
+                  activeView === v.id
+                    ? "bg-emerald-600/20 text-emerald-300"
+                    : "text-zinc-400 hover:bg-white/10 hover:text-zinc-200"
+                )}
               >
-                <span className="hidden sm:inline">{view.charAt(0).toUpperCase() + view.slice(1)}</span>
-                <span className="sm:hidden">{view.charAt(0).toUpperCase()}</span>
+                <v.icon className="w-4 h-4" />
+                {v.label}
               </button>
             ))}
           </div>
 
-          {/* User Actions */}
-          <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3 flex-shrink-0">
+          {/* User actions */}
+          <div className="flex items-center gap-3">
             {session?.user?.email && (
-              <div className="hidden lg:flex items-center gap-2 px-2 md:px-3 py-1.5 rounded-lg bg-zinc-900/50 border border-zinc-800">
-                <UserIcon className="w-3.5 h-3.5 md:w-4 md:h-4 text-zinc-400" />
-                <span className="text-xs text-zinc-300 truncate max-w-[100px] md:max-w-[120px]">
-                  {session.user.email}
-                </span>
+              <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/5 text-xs text-zinc-400">
+                <UserIcon className="w-3.5 h-3.5" />
+                <span className="truncate max-w-[140px]">{session.user.email}</span>
               </div>
             )}
             <Link
               href="/dashboard"
-              className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium text-gray-300 hover:text-white hover:bg-white/10 transition-colors"
-              title="Go to Dashboard"
+              className="text-zinc-400 hover:text-white hover:bg-white/5 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-2 text-sm"
             >
-              <LayoutDashboard className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              <LayoutDashboard className="w-4 h-4" />
               <span className="hidden sm:inline">Dashboard</span>
             </Link>
             <LogoutButton />
             <button
               onClick={resetProject}
-              className="px-3 sm:px-4 py-1.5 text-xs sm:text-sm font-medium rounded-full bg-red-900/40 hover:bg-red-900/60 transition-all"
+              className="flex items-center gap-2 px-3 sm:px-4 py-1.5 text-xs sm:text-sm font-medium rounded-full bg-red-900/40 hover:bg-red-900/60 transition-all"
               disabled={saving}
             >
+              <RotateCcw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               Reset
             </button>
           </div>
         </div>
       </header>
 
-      <main className="flex flex-1 pt-14 overflow-hidden">
-        {/* ChatPanel - left sidebar */}
-        <div className="w-[380px] border-r border-white/10 bg-black/60 backdrop-blur-md overflow-y-auto">
+      <main className="flex flex-1 overflow-hidden">
+        {/* Chat sidebar */}
+        <div className="w-96 border-r border-white/10 bg-[#111]/80 backdrop-blur-md overflow-y-auto">
           <ChatPanel
             project={project}
             setProject={setProject}
             projectId={projectId || undefined}
-            onSave={async () => {
-              // Your save logic here (e.g. API call)
-              const response = await fetch("/api/Projects", {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  id: projectId,
-                  frontendFiles: project.frontendFiles,
-                  backendFiles: project.backendFiles,
-                }),
-              });
-              if (!response.ok) {
-                const errorData = await response.json().catch(() => ({}));
-                console.error("Manual save failed:", response.status, errorData.error || response.statusText);
-              }
-            }}
+            onSave={saveProject}
           />
         </div>
 
-        {/* Main content area */}
-        <div className="flex-1 relative">
-          {!hasFiles && activeView !== "code" && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-500 bg-black/80">
-              <div className="text-3xl mb-4">No files yet</div>
-              <p className="text-lg">Ask the agent to create something!</p>
-            </div>
-          )}
-
-          {activeView === "code" && (
-            <CodeEditor
-              project={project}
-              onFileChange={handleFileChange}
-              onActiveFileChange={handleActiveFileChange}
-            />
-          )}
-
-          {activeView === "preview" && (
-            <div className="absolute inset-0">
-              {hasFiles ? (
-                <PreviewPanel project={project} />
-              ) : (
-                <div className="h-full flex flex-col items-center justify-center text-gray-500">
-                  <div className="text-3xl mb-4">No files yet</div>
-                  <p>Ask the agent to create something!</p>
+        {/* Main content */}
+        <div className="flex-1 relative bg-black/60">
+          {!hasFiles && activeView !== "code" ? (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="absolute inset-0 flex flex-col items-center justify-center text-zinc-500"
+            >
+              <Code2 className="w-16 h-16 mb-6 text-zinc-600" />
+              <h3 className="text-2xl font-medium mb-3">No files yet</h3>
+              <p className="text-sm">Ask the AI agent to generate code!</p>
+            </motion.div>
+          ) : (
+            <>
+              {activeView === "code" && (
+                <CodeEditor
+                  project={project}
+                  onFileChange={handleFileChange}
+                  onActiveFileChange={handleActiveFileChange}
+                />
+              )}
+              {activeView === "preview" && <PreviewPanel project={project} />}
+              {activeView === "window" && (
+                <div className="absolute inset-0 flex items-center justify-center text-zinc-500">
+                  <div className="text-center">
+                    <h3 className="text-2xl mb-3">Window View</h3>
+                    <p className="text-sm">Desktop simulation – coming soon</p>
+                  </div>
                 </div>
               )}
-            </div>
-          )}
-
-          {activeView === "window" && (
-            <div className="absolute inset-0 flex items-center justify-center text-gray-500 bg-black/80">
-              <div className="text-center">
-                <div className="text-3xl mb-4">Window View</div>
-                <p>Desktop-like app simulation coming soon</p>
-              </div>
-            </div>
-          )}
-
-          {activeView === "database" && (
-            <div className="absolute inset-0 flex items-center justify-center text-gray-500 bg-black/80">
-              <div className="text-center">
-                <div className="text-3xl mb-4">Database</div>
-                <p>Database explorer coming soon</p>
-              </div>
-            </div>
+              {activeView === "database" && (
+                <div className="absolute inset-0 flex items-center justify-center text-zinc-500">
+                  <div className="text-center">
+                    <h3 className="text-2xl mb-3">Database Explorer</h3>
+                    <p className="text-sm">Coming soon</p>
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </div>
       </main>
 
-      {/* Bottom status bar */}
-      <footer className="fixed bottom-0 left-0 right-0 h-8 bg-black/80 backdrop-blur-md border-t border-white/10 flex items-center px-4 text-xs text-gray-400">
-        <span>AI Builder v1.0 • Preview on localhost:3001</span>
-        {saving && <span className="ml-auto text-blue-400">Saving...</span>}
+      {/* Status bar */}
+      <footer className="fixed bottom-0 left-0 right-0 h-8 bg-[#0A0A0A]/80 backdrop-blur-xl border-t border-white/5 flex items-center px-6 text-xs text-zinc-500">
+        <span>AI Builder • Local Preview</span>
+        {saving && (
+          <span className="ml-auto flex items-center gap-2 text-emerald-400">
+            <Loader2 className="w-3 h-3 animate-spin" />
+            Saving...
+          </span>
+        )}
       </footer>
     </div>
   );
@@ -298,11 +281,8 @@ export default function BuilderPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex items-center justify-center h-screen bg-black text-white">
-          <div className="text-center">
-            <div className="w-8 h-8 border-4 border-purple-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-zinc-400">Loading...</p>
-          </div>
+        <div className="min-h-screen bg-[#0A0A0A] flex items-center justify-center">
+          <Loader2 className="w-10 h-10 animate-spin text-emerald-500" />
         </div>
       }
     >

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 
 export default function SignupPage() {
     const [email, setEmail] = useState("");
@@ -18,7 +18,7 @@ export default function SignupPage() {
         setError("");
 
         try {
-            const res = await fetch("/api/Users", {
+            const res = await fetch("/api/users", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, password }),
