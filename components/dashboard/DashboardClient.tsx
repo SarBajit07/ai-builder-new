@@ -338,7 +338,7 @@ export default function DashboardClient({ user }: DashboardClientProps) {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => signOut({ callbackUrl: "/login" })}
+              onClick={() => signOut({ callbackUrl: "/" })}
               className="text-zinc-400 hover:text-white hover:bg-white/5"
             >
               <LogOut className="w-4 h-4 sm:mr-2" />
